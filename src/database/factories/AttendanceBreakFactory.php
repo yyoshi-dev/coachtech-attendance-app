@@ -26,6 +26,9 @@ class AttendanceBreakFactory extends Factory
         ];
     }
 
+    /**
+     * 出退勤に依存して休憩時間を生成
+     */
     public function forAttendance(Attendance $attendance, int $sortOrder = 1): static
     {
         // 出退勤時間
@@ -37,6 +40,33 @@ class AttendanceBreakFactory extends Factory
         $breakEnd = $breakStart->copy()->addMinutes(fake()->numberBetween(30, 60));
 
         // 休憩終了時間が退勤時間を超えないように調整
+        if ($breakEnd->gt($clockOut)) {
+            $breakEnd = $clockOut->copy()->subMinutes(1);
+        }
+
+        return $this->for($attendance)->state([
+            'attendance_id' => $attendance->id,
+            'break_start' => $breakStart,
+            'break_end' => $breakEnd,
+            'sort_order' => $sortOrder,
+        ]);
+    }
+
+    /**
+     * 前回休憩終了後に休憩を生成
+     */
+    public function afterBreak(
+        Attendance $attendance,
+        Carbon|string $previousBreakEnd,
+        int $sortOrder
+    ): static
+    {
+        $clockOut = Carbon::parse($attendance->clock_out);
+        $previousBreakEnd = Carbon::parse($previousBreakEnd);
+
+        $breakStart = $previousBreakEnd->copy()->addMinutes(fake()->numberBetween(60, 120));
+        $breakEnd = $breakStart->copy()->addMinutes(fake()->numberBetween(5, 15));
+
         if ($breakEnd->gt($clockOut)) {
             $breakEnd = $clockOut->copy()->subMinutes(1);
         }

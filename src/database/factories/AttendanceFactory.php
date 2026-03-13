@@ -23,9 +23,33 @@ class AttendanceFactory extends Factory
             fake()->dateTimeBetween('-30 days', 'today')
         )->startOfDay();
 
-        // 出勤を定義
+        return [
+            'user_id' => User::factory(),
+            ...$this->buildAttendanceTimes($workDate),
+        ];
+    }
+
+    /**
+     * 指定した勤務日で勤怠を生成
+     */
+    public function forWorkDate(Carbon|string $date): static
+    {
+        // 日付をCarbonに変換
+        $workDate = $date instanceof Carbon
+            ? $date->copy()->startOfDay()
+            : Carbon::parse($date)->startOfDay();
+
+        return $this->state(fn () => $this->buildAttendanceTimes($workDate));
+    }
+
+    /**
+     * 出退勤時間設定用の共通関数
+     */
+    private function buildAttendanceTimes(Carbon $workDate): array
+    {
+        // 出勤時間を定義
         $clockIn = $workDate->copy()->setTime(
-            fake()->numberBetween(8, 10),
+            fake()->numberBetween(8, 9),
             fake()->numberBetween(0, 59)
         );
 
@@ -33,7 +57,6 @@ class AttendanceFactory extends Factory
         $clockOut = $clockIn->copy()->addHours(fake()->numberBetween(8, 10));
 
         return [
-            'user_id' => User::factory(),
             'work_date' => $workDate->toDateString(),
             'clock_in' => $clockIn,
             'clock_out' => $clockOut,
