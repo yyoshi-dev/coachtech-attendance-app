@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('attendance_breaks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->string('role', 20);
-            $table->rememberToken();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->foreignId('attendance_id')->constrained();
+            $table->dateTime('break_start');
+            $table->dateTime('break_end')->nullable();
+            $table->unsignedInteger('sort_order');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('attendance_breaks');
     }
 };
