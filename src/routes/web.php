@@ -5,18 +5,10 @@ use App\Http\Controllers\User\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 // 認証関連
 Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])
     ->middleware('guest')
     ->name('admin.login');
-
-Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('guest')
-    ->name('admin.login.store');
 
 Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware(['auth', 'admin'])
