@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\User\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -31,9 +33,8 @@ Route::get('/email/verify/mailhog', function () {
 // 一般ユーザーの画面
 Route::middleware(['auth', 'verified'])->group(
     function () {
-        Route::get('/attendance', function () {
-            return view('welcome');
-        })->name('attendance.index'); // 仮置き
+        Route::get('/attendance', [AttendanceController::class, 'showAttendancePage'])
+            ->name('attendance.index');
     }
 );
 
@@ -42,9 +43,8 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware('auth')->group(
     function () {
-        Route::get('/attendance/list', function () {
-            return view('welcome');
-        })->name('attendance.list'); // 仮置き
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'showAttendanceList'])
+            ->name('attendance.list');
     }
 );
 
