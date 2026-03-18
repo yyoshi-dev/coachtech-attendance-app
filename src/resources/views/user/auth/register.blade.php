@@ -23,7 +23,7 @@
                 @csrf
 
                 <div class="auth-form__group">
-                    <label for="name" class="auth-form__label">ユーザー名</label>
+                    <label for="name" class="auth-form__label">名前</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" class="auth-form__input">
                     @error('name')
                     <p class="auth-form__error-message">{{ $message }}</p>
