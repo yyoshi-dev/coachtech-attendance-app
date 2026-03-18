@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'mailhog' => [
+        'url' => env('MAILHOG_URL', 'http://localhost:8025/'),
+    ],
+
 ];
