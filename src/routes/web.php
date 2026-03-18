@@ -23,22 +23,19 @@ Route::get('/email/verify/mailhog', function () {
 })->middleware('auth')->name('verification.mailhog');
 
 // 一般ユーザーの画面
-Route::middleware(['auth', 'verified'])->group(
-    function () {
-        Route::get('/attendance', [AttendanceController::class, 'showAttendancePage'])
-            ->name('attendance.index');
-    }
-);
+Route::middleware(['auth', 'verified', 'user'])->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'showAttendancePage'])
+        ->name('attendance.index');
+});
 
 // 管理者の画面
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware('auth')->group(
-    function () {
+    ->middleware(['auth', 'admin'])
+    ->group(function () {
         Route::get('/attendance/list', [AdminAttendanceController::class, 'showAttendanceList'])
             ->name('attendance.list');
-    }
-);
+    });
 
 
 // ⚠️ 開発が終わったら必ず消してください！
