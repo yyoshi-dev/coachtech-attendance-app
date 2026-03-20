@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <div class="app">
+    <div class="app @yield('app-modifier')">
         <header class="header">
             <a href="@yield('header-logo-link')" class="header__logo">
                 <img src="{{ asset('images/coachtech-header-logo.png') }}" alt="COACHTECH">

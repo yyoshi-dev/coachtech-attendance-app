@@ -33,4 +33,36 @@ class Attendance extends Model
     {
         return $this->hasMany(AttendanceCorrectionRequest::class);
     }
+
+    // 勤怠ステータスを計算
+    public function getStatusAttribute()
+    {
+        // 各時間の抽出
+        $clockIn = $this->clock_in;
+        $clockOut = $this->clock_out;
+        $latestBreak = $this->attendanceBreaks->sortByDesc('sort_order')->first();
+
+        // 出勤前
+        if (!$clockIn) {
+            return '勤務外';
+        }
+
+        // 退勤済
+        if ($clockOut) {
+            return '退勤済';
+        }
+
+        // 休憩中
+        if ($latestBreak && !$latestBreak->break_end) {
+            return '休憩中';
+        }
+
+        return '出勤中';
+    }
+
+    // 最新の休憩レコードを取得
+    public function getLatestBreakAttribute()
+    {
+        return $this->attendanceBreaks->sortByDesc('sort_order')->first();
+    }
 }
