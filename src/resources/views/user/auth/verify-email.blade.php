@@ -7,6 +7,9 @@
 {{-- Header --}}
 @section('header-logo-link', url('/login'))
 
+{{-- App Background --}}
+@section('app-modifier', 'app--white')
+
 {{-- CSS --}}
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
