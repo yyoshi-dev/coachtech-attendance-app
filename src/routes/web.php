@@ -26,6 +26,14 @@ Route::get('/email/verify/mailhog', function () {
 Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'showAttendancePage'])
         ->name('attendance.index');
+    Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])
+        ->name('attendance.clock-in');
+    Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])
+        ->name('attendance.clock-out');
+    Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])
+        ->name('attendance.break-start');
+    Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])
+        ->name('attendance.break-end');
 });
 
 // 管理者の画面
