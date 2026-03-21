@@ -16,6 +16,11 @@ class Attendance extends Model
         'clock_out',
     ];
 
+    protected $casts = [
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
+    ];
+
     // usersテーブルとのリレーション
     public function user()
     {
@@ -64,5 +69,53 @@ class Attendance extends Model
     public function getLatestBreakAttribute()
     {
         return $this->attendanceBreaks->sortByDesc('sort_order')->first();
+    }
+
+    // 休憩時間の合計を計算
+    public function getBreakTotalAttribute()
+    {
+        return $this->attendanceBreaks->sum('duration');
+    }
+
+    // 勤怠時間の合計を計算
+    public function getWorkTotalAttribute()
+    {
+        $clockIn = $this->clock_in;
+        $clockOut = $this->clock_out;
+
+        if (! $clockIn || ! $clockOut) {
+            return 0;
+        }
+
+        $workDuration = $clockIn->diffInSeconds($clockOut);
+        $breakTotal = $this->breakTotal;
+
+        return $workDuration - $breakTotal;
+    }
+
+    // 合計休憩時間の表示形式を指定
+    public function getBreakTotalFormattedAttribute()
+    {
+        if (!$this->breakTotal) {
+            return '';
+        }
+
+        $hours = intdiv($this->breakTotal, 3600);
+        $minutes = intdiv($this->breakTotal % 3600, 60);
+
+        return sprintf('%d:%02d', $hours, $minutes);
+    }
+
+    // 合計勤務時間の表示形式を指定
+    public function getWorkTotalFormattedAttribute()
+    {
+        if (!$this->workTotal) {
+            return '';
+        }
+
+        $hours = intdiv($this->workTotal, 3600);
+        $minutes = intdiv($this->workTotal % 3600, 60);
+
+        return sprintf('%d:%02d', $hours, $minutes);
     }
 }
