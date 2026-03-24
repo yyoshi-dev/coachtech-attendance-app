@@ -27,8 +27,13 @@ class AttendanceController extends Controller
             ->first();
 
         $status = $attendance ? $attendance->status : '勤務外';
+        $isAfterWork = $attendance && $attendance->status === '退勤済';
 
-        return view('user.attendance.index', compact('status', 'currentDateTime'));
+        return view('user.attendance.index', compact(
+            'status',
+            'currentDateTime',
+            'isAfterWork'
+        ));
     }
 
     // 出勤登録
