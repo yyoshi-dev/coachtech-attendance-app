@@ -9,7 +9,11 @@
 
 {{-- Header-Nav --}}
 @section('header-nav')
-@include('components.nav.user-default')
+@if ($isAfterWork)
+    @include('components.nav.user-after-work')
+@else
+    @include('components.nav.user-default')
+@endif
 @endsection
 
 {{-- CSS --}}
