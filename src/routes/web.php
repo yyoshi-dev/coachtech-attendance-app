@@ -24,7 +24,7 @@ Route::get('/email/verify/mailhog', function () {
 
 // 一般ユーザーの画面
 Route::middleware(['auth', 'verified', 'user'])->group(function () {
-    Route::get('/attendance', [AttendanceController::class, 'showAttendancePage'])
+    Route::get('/attendance', [AttendanceController::class, 'index'])
         ->name('attendance.index');
     Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])
         ->name('attendance.clock-in');
@@ -34,6 +34,12 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
         ->name('attendance.break-start');
     Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])
         ->name('attendance.break-end');
+    Route::get('/attendance/list', [AttendanceController::class, 'list'])
+        ->name('attendance.list');
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'detail'])
+        ->name('attendance.detail');
+    Route::get('/attendance/detail/date/{date}', [AttendanceController::class, 'detailByDate'])
+        ->name('attendance.detail.date');
 });
 
 // 管理者の画面

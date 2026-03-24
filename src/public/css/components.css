@@ -55,3 +55,14 @@
     margin: 0;
     text-align: center;
 }
+
+/* 共通ページタイトル */
+.page-title {
+    width: 100%;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 5px 20px;
+    border-left: 8px solid #000000;
+    line-height: 1.2;
+    margin: 0;
+}

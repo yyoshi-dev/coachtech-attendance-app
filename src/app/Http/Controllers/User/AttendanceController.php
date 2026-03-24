@@ -5,13 +5,15 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceBreak;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
     // 勤怠登録画面（一般ユーザー）の表示
-    public function showAttendancePage()
+    public function index()
     {
         // 日時情報の取得
         $now = now();
@@ -145,5 +147,51 @@ class AttendanceController extends Controller
         }
 
         return redirect()->route('attendance.index');
+    }
+
+    // 勤怠一覧表示
+    public function list(Request $request)
+    {
+        // 表示対象月の決定
+        $month = $request->query('month');
+        $targetDate = $month
+            ? Carbon::createFromFormat('Y-m', $month)->startOfMonth()
+            : now()->startOfMonth();
+
+        $start = $targetDate;
+        $end = $targetDate->copy()->endOfMonth();
+        $period = CarbonPeriod::create($start, $end);
+
+        // 対象月の勤怠一覧取得
+        $attendances = Attendance::with('attendanceBreaks')
+            ->where('user_id', Auth::id())
+            ->whereBetween('work_date', [$start, $end])
+            ->get()
+            ->keyBy('work_date');
+
+        // 月切り替え用
+        $currentMonth = $targetDate->format('Y/m');
+        $previousMonth = $targetDate->copy()->subMonth()->format('Y-m');
+        $nextMonth = $targetDate->copy()->addMonth()->format('Y-m');
+
+        return view('user.attendance.list', compact(
+            'period',
+            'attendances',
+            'currentMonth',
+            'previousMonth',
+            'nextMonth'
+        ));
+    }
+
+    // 勤怠詳細表示 (既存レコード)
+    public function detail(Request $request)
+    {
+        return view('user.attendance.detail');
+    }
+
+    // 勤怠詳細表示 (レコード無し日付)
+    public function detailByDate(Request $request)
+    {
+        return view('user.attendance.detail');
     }
 }

@@ -5,7 +5,7 @@
 @section('title', '勤怠登録画面（一般ユーザー）')
 
 {{-- Header --}}
-@section('header-logo-link', url('/login'))
+@section('header-logo-link', route('attendance.index'))
 
 {{-- Header-Nav --}}
 @section('header-nav')

@@ -16,6 +16,11 @@ class AttendanceBreak extends Model
         'sort_order',
     ];
 
+    protected $casts = [
+        'break_start' => 'datetime',
+        'break_end' => 'datetime',
+    ];
+
     // attendancesテーブルとのリレーション
     public function attendance()
     {
@@ -26,5 +31,18 @@ class AttendanceBreak extends Model
     public function attendanceCorrectionRequestBreaks()
     {
         return $this->hasMany(AttendanceCorrectionRequestBreak::class);
+    }
+
+    // 休憩時間を計算
+    public function getDurationAttribute()
+    {
+        $breakStart = $this->break_start;
+        $breakEnd = $this->break_end;
+
+        if (! $breakStart || ! $breakEnd) {
+            return 0;
+        }
+
+        return $breakStart->diffInSeconds($breakEnd);
     }
 }
