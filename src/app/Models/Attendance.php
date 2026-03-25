@@ -17,6 +17,7 @@ class Attendance extends Model
     ];
 
     protected $casts = [
+        'work_date' => 'date',
         'clock_in' => 'datetime',
         'clock_out' => 'datetime',
     ];
@@ -30,7 +31,7 @@ class Attendance extends Model
     // attendance_breaksテーブルとのリレーション
     public function attendanceBreaks()
     {
-        return $this->hasMany(AttendanceBreak::class);
+        return $this->hasMany(AttendanceBreak::class)->orderBy('sort_order');
     }
 
     // attendance_correction_requestsテーブルとのリレーション
