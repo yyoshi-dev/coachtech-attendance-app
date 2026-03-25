@@ -78,8 +78,7 @@
                             <a href="{{ route('attendance.detail', ['id' => $attendance->id]) }}"
                                 class="attendance-table__detail-link">詳細</a>
                         @else
-                            <a href="{{ route('attendance.detail.date', ['date' => $date->toDateString()]) }}"
-                                class="attendance-table__detail-link">詳細</a>
+                            <span class="attendance-table__detail-text">詳細</span>
                         @endif
                     </td>
                 </tr>

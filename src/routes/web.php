@@ -38,8 +38,6 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
         ->name('attendance.list');
     Route::get('/attendance/detail/{id}', [AttendanceController::class, 'detail'])
         ->name('attendance.detail');
-    Route::get('/attendance/detail/date/{date}', [AttendanceController::class, 'detailByDate'])
-        ->name('attendance.detail.date');
 });
 
 // 管理者の画面
