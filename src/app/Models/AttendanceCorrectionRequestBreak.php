@@ -17,6 +17,11 @@ class AttendanceCorrectionRequestBreak extends Model
         'sort_order',
     ];
 
+    protected $casts = [
+        'requested_break_start' => 'datetime',
+        'requested_break_end' => 'datetime',
+    ];
+
     // attendance_correction_requestsテーブルとのリレーション
     public function attendanceCorrectionRequest()
     {

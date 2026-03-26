@@ -20,6 +20,12 @@ class AttendanceCorrectionRequest extends Model
         'reviewer_id',
     ];
 
+    protected $casts = [
+        'requested_clock_in' => 'datetime',
+        'requested_clock_out' => 'datetime',
+        'reviewed_at' => 'datetime',
+    ];
+
     // attendancesテーブルとのリレーション
     public function attendance()
     {
