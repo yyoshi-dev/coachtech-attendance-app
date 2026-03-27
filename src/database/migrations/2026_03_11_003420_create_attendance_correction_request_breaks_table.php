@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('attendance_correction_request_breaks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('correction_request_id')->constrained('attendance_correction_requests')->name('acr_breaks_request_fk');
+            $table->foreignId('attendance_correction_request_id')->constrained('attendance_correction_requests')->name('acr_breaks_request_fk');
             $table->foreignId('attendance_break_id')->nullable()->constrained();
             $table->dateTime('requested_break_start');
             $table->dateTime('requested_break_end');
