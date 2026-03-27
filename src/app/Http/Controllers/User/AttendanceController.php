@@ -197,12 +197,24 @@ class AttendanceController extends Controller
         // 勤怠情報の取得
         $attendance = Attendance::with([
                 'attendanceBreaks',
-                'attendanceCorrectionRequests',
+                'attendanceCorrectionRequests.attendanceCorrectionRequestBreaks',
             ])
             ->where('id', $id)
             ->where('user_id', $user->id)
             ->firstOrFail();
 
-        return view('user.attendance.detail', compact('user', 'attendance'));
+        // 修正ステータスの確認
+        $latestCorrection = $attendance->attendanceCorrectionRequests
+            ->sortByDesc('created_at')
+            ->first();
+
+        $isPending = $latestCorrection && $latestCorrection->status === 'pending';
+
+        return view('user.attendance.detail', compact(
+            'user',
+            'attendance',
+            'latestCorrection',
+            'isPending'
+        ));
     }
 }
