@@ -35,7 +35,8 @@ class AttendanceCorrectionRequest extends Model
     // attendance_correction_request_breaksテーブルとのリレーション
     public function attendanceCorrectionRequestBreaks()
     {
-        return $this->hasMany(AttendanceCorrectionRequestBreak::class);
+        return $this->hasMany(AttendanceCorrectionRequestBreak::class)
+            ->orderBy('sort_order');
     }
 
     // usersテーブル (request_user_id)とのリレーション
