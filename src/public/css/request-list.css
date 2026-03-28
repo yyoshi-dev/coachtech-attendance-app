@@ -1,0 +1,86 @@
+.request-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 63%;
+    margin: 0 auto;
+    padding-top: 80px;
+}
+
+.request-list__page-title {
+    margin-bottom: 50px;
+}
+
+.tab-menu {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 40px;
+    border-bottom: 1px solid #000000;
+    padding: 10px 60px;
+    margin-bottom: 45px;
+}
+
+.tab-menu__link {
+    color: #000000;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    letter-spacing: 0.15em;
+}
+
+.tab-menu__link--active {
+    font-weight: bold;
+}
+
+.request-table {
+    width: 100%;
+    background-color: #ffffff;
+    table-layout: fixed;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.request-table__row {
+    height: 45px;
+}
+
+.request-table__header {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    color: #737373;
+    border-bottom: 3px solid #e1e1e1;
+    text-align: center;
+}
+
+.request-table__item {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    color: #737373;
+    text-align: center;
+    border-bottom: 2px solid #e1e1e1;
+}
+
+.request-table__row:last-child .request-table__item {
+    border-bottom: none;
+}
+
+.request-table__item--date {
+    letter-spacing: 0;
+}
+
+.request-table__item--remarks {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.request-table__detail-link {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+}
