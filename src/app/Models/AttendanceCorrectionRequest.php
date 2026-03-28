@@ -50,4 +50,14 @@ class AttendanceCorrectionRequest extends Model
     {
         return $this->belongsTo(User::class, 'reviewer_id');
     }
+
+    // ステータス表示用ラベル
+    public function getStatusLabelAttribute()
+    {
+        return match ($this->status) {
+            'pending' => '承認待ち',
+            'approved' => '承認済み',
+            default => '不明',
+        };
+    }
 }
