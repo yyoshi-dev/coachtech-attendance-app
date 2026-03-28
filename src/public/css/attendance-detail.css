@@ -1,0 +1,137 @@
+.attendance-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 63%;
+    margin: 0 auto;
+    padding-top: 90px;
+}
+
+.attendance-detail__page-title {
+    margin-bottom: 45px;
+}
+
+.correction-form {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.correction-form__group {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid #e1e1e1;
+    background-color: #ffffff;
+    padding: 20px 60px;
+    margin: 0;
+}
+
+.correction-form__group:last-of-type {
+    border: none;
+    margin-bottom: 36px;
+}
+
+.correction-form__label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #737373;
+    flex: 0 0 250px;
+}
+
+.correction-form__item {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: start;
+    width: 40%;
+    min-width: 312px;
+    margin: 0;
+}
+
+.correction-form__text-group,
+.correction-form__input-group {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.correction-form__text,
+.correction-form__input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    padding: 0 25px;
+}
+
+.correction-form__text {
+    line-height: 28px;
+}
+
+.correction-form__input {
+    height: 28px;
+    color: #000000;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+}
+
+.correction-form__input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+.correction-form__separator {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 0 25px;
+}
+
+.correction-form__item--textarea {
+    display: flex;
+    align-items: center;
+}
+
+.correction-form__text--textarea {
+    display: block;
+    width: 100%;
+    text-align: left;
+    line-height: 1.5;
+    padding: 0;
+}
+
+.correction-form__textarea {
+    width: 100%;
+    box-sizing: border-box;
+    height: 72px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #000000;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    resize: none;
+    padding: 5px 10px;
+}
+
+.correction-form__error-message {
+    margin: 6px 0 0;
+    color: #ff5555;
+    font-size: 16px;
+}
+
+.correction-form__btn {
+    width: 130px;
+    height: 50px;
+    font-size: 22px;
+    margin-left: auto;
+}
+
+.correction-form__pending-message {
+    display: block;
+    width: 100%;
+    text-align: right;
+    font-size: 18px;
+    font-weight: 800;
+    color: #ff0000;
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+}
