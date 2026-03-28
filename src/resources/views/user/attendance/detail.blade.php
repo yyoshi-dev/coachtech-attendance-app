@@ -63,13 +63,13 @@
                 @if ($isPending)
                     <div class="correction-form__text-group">
                         <span class="correction-form__text">
-                            {{ $latestCorrection->requested_clock_in?->format('H:i') }}
+                            {{ $correction->requested_clock_in?->format('H:i') }}
                         </span>
                     </div>
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__text-group">
                         <span class="correction-form__text">
-                            {{ $latestCorrection->requested_clock_out?->format('H:i') }}
+                            {{ $correction->requested_clock_out?->format('H:i') }}
                         </span>
                     </div>
                 @else
@@ -102,8 +102,8 @@
 
         {{-- 休憩 --}}
         @if ($isPending)
-            @if ($latestCorrection->attendanceCorrectionRequestBreaks->isNotEmpty())
-                @foreach ($latestCorrection->attendanceCorrectionRequestBreaks as $break)
+            @if ($correction->attendanceCorrectionRequestBreaks->isNotEmpty())
+                @foreach ($correction->attendanceCorrectionRequestBreaks as $break)
                     <dl class="correction-form__group">
                         <dt class="correction-form__label">
                             休憩{{ $break->sort_order > 1 ? $break->sort_order : '' }}
@@ -210,7 +210,7 @@
                 @if ($isPending)
                     <div class="correction-form__text-group">
                         <span class="correction-form__text correction-form__text--textarea">
-                            {{ $latestCorrection->request_remarks }}
+                            {{ $correction->request_remarks }}
                         </span>
                     </div>
                 @else
