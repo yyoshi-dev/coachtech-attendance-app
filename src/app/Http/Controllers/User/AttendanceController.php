@@ -189,8 +189,10 @@ class AttendanceController extends Controller
     }
 
     // 勤怠詳細表示 (既存レコード)
-    public function detail($id)
+    public function detail(Request $request, $id)
     {
+        $correctionId = $request->query('correction_id');
+
         /** @var User $user */
         $user = Auth::user();
 
@@ -203,17 +205,28 @@ class AttendanceController extends Controller
             ->where('user_id', $user->id)
             ->firstOrFail();
 
-        // 修正ステータスの確認
-        $latestCorrection = $attendance->attendanceCorrectionRequests
-            ->sortByDesc('created_at')
-            ->first();
+        // 修正情報の取得
+        // 申請一覧からの表示の場合
+        if ($correctionId) {
+            $correction = $attendance->attendanceCorrectionRequests
+                ->where('id', $correctionId)
+                ->first();
 
-        $isPending = $latestCorrection && $latestCorrection->status === 'pending';
+            abort_if(!$correction, 404);
+
+        // 勤怠一覧からの表示の場合
+        } else {
+            $correction = $attendance->attendanceCorrectionRequests
+                ->sortByDesc('created_at')
+                ->first();
+        }
+
+        $isPending = $correction && $correction->status === 'pending';
 
         return view('user.attendance.detail', compact(
             'user',
             'attendance',
-            'latestCorrection',
+            'correction',
             'isPending'
         ));
     }
