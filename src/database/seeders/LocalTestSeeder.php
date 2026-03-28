@@ -49,7 +49,7 @@ class LocalTestSeeder extends Seeder
         // 日付リストを作成
         $today = Carbon::today();
         $start = $today->copy()->subMonthNoOverflow(2)->startOfMonth();
-        $dates = $start->daysUntil($today)->toArray();
+        $dates = $start->daysUntil($today->copy()->subDay())->toArray();
         $dates = array_filter(
             $dates, fn($d) => !in_array($d->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY])
         );

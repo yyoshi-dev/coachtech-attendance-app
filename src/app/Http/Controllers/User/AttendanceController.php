@@ -172,7 +172,7 @@ class AttendanceController extends Controller
             ->where('user_id', Auth::id())
             ->whereBetween('work_date', [$start, $end])
             ->get()
-            ->keyBy('work_date');
+            ->keyBy(fn ($attendance) => $attendance->work_date->toDateString());
 
         // 月切り替え用
         $currentMonth = $targetDate->format('Y/m');
@@ -189,14 +189,32 @@ class AttendanceController extends Controller
     }
 
     // 勤怠詳細表示 (既存レコード)
-    public function detail(Request $request)
+    public function detail($id)
     {
-        return view('user.attendance.detail');
-    }
+        /** @var User $user */
+        $user = Auth::user();
 
-    // 勤怠詳細表示 (レコード無し日付)
-    public function detailByDate(Request $request)
-    {
-        return view('user.attendance.detail');
+        // 勤怠情報の取得
+        $attendance = Attendance::with([
+                'attendanceBreaks',
+                'attendanceCorrectionRequests.attendanceCorrectionRequestBreaks',
+            ])
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        // 修正ステータスの確認
+        $latestCorrection = $attendance->attendanceCorrectionRequests
+            ->sortByDesc('created_at')
+            ->first();
+
+        $isPending = $latestCorrection && $latestCorrection->status === 'pending';
+
+        return view('user.attendance.detail', compact(
+            'user',
+            'attendance',
+            'latestCorrection',
+            'isPending'
+        ));
     }
 }

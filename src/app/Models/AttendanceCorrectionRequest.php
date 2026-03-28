@@ -20,6 +20,12 @@ class AttendanceCorrectionRequest extends Model
         'reviewer_id',
     ];
 
+    protected $casts = [
+        'requested_clock_in' => 'datetime',
+        'requested_clock_out' => 'datetime',
+        'reviewed_at' => 'datetime',
+    ];
+
     // attendancesテーブルとのリレーション
     public function attendance()
     {
@@ -29,7 +35,8 @@ class AttendanceCorrectionRequest extends Model
     // attendance_correction_request_breaksテーブルとのリレーション
     public function attendanceCorrectionRequestBreaks()
     {
-        return $this->hasMany(AttendanceCorrectionRequestBreak::class);
+        return $this->hasMany(AttendanceCorrectionRequestBreak::class)
+            ->orderBy('sort_order');
     }
 
     // usersテーブル (request_user_id)とのリレーション

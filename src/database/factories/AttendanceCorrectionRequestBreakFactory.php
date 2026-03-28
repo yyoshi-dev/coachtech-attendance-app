@@ -20,7 +20,7 @@ class AttendanceCorrectionRequestBreakFactory extends Factory
     public function definition(): array
     {
         return [
-            'correction_request_id' => AttendanceCorrectionRequest::factory(),
+            'attendance_correction_request_id' => AttendanceCorrectionRequest::factory(),
             'attendance_break_id' => null,
             'requested_break_start' => now(),
             'requested_break_end' => now()->addHour(),
@@ -48,7 +48,7 @@ class AttendanceCorrectionRequestBreakFactory extends Factory
         }
 
         return $this->state([
-            'correction_request_id' => $request->id,
+            'attendance_correction_request_id' => $request->id,
             'attendance_break_id' => $break->id,
             'requested_break_start' =>  $requestedBreakStart,
             'requested_break_end' =>$requestedBreakEnd ,

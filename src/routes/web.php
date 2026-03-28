@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\User\AttendanceController;
+use App\Http\Controllers\User\CorrectionRequestController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -38,8 +39,10 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
         ->name('attendance.list');
     Route::get('/attendance/detail/{id}', [AttendanceController::class, 'detail'])
         ->name('attendance.detail');
-    Route::get('/attendance/detail/date/{date}', [AttendanceController::class, 'detailByDate'])
-        ->name('attendance.detail.date');
+    Route::post('/attendance/detail/{id}', [CorrectionRequestController::class, 'storeCorrection'])
+        ->name('attendance.corrections.store');
+    Route::get('/stamp_correction_request/list', [CorrectionRequestController::class, 'indexCorrections'])
+        ->name('attendance.corrections.index');
 });
 
 // 管理者の画面
