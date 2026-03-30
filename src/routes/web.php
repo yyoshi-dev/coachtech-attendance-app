@@ -50,10 +50,8 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'admin'])
     ->group(function () {
-        Route::get('/attendance/list', [AdminAttendanceController::class, 'showAttendanceList'])
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'dailyList'])
             ->name('attendance.list');
+        Route::get('/attendance/{id}', [AdminAttendanceController::class, 'detail'])
+            ->name('attendance.detail');
     });
-
-
-// ⚠️ 開発が終わったら必ず消してください！
-Route::get('/logout', [Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'destroy']);
