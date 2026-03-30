@@ -24,16 +24,16 @@
 
     <div class="attendance-list__nav">
         <a href="{{ route('attendance.list', ['month' => $previousMonth]) }}" class="attendance-list__nav-item">
-            <img src="{{ asset('images/arrow-image.png') }}" class="attendance-list__arrow-icon">
+            <img src="{{ asset('images/arrow-image.png') }}" alt="" class="attendance-list__arrow-icon">
             <span class="attendance-list__nav-item-text">前月</span>
         </a>
         <div class="attendance-list__nav-period">
-            <img src="{{ asset('images/calendar-image.png') }}" class="attendance-list__calendar-icon">
+            <img src="{{ asset('images/calendar-image.png') }}" alt="" class="attendance-list__calendar-icon">
             <span class="attendance-list__nav-period-text">{{ $currentMonth }}</span>
         </div>
         <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="attendance-list__nav-item">
             <span class="attendance-list__nav-item-text">翌月</span>
-            <img src="{{ asset('images/arrow-image.png') }}" class="attendance-list__arrow-icon attendance-list__arrow-icon--reverse">
+            <img src="{{ asset('images/arrow-image.png') }}" alt="" class="attendance-list__arrow-icon attendance-list__arrow-icon--reverse">
         </a>
     </div>
 
