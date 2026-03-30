@@ -7,6 +7,10 @@
     padding-top: 40px;
 }
 
+.attendance-list--admin {
+    padding-top: 90px;
+}
+
 .attendance-list__page-title {
     margin-bottom: 45px;
 }
@@ -76,6 +80,7 @@
 }
 
 .attendance-table__col-date,
+.attendance-table__col-name,
 .attendance-table__col-detail {
     width: 25%;
 }
