@@ -119,4 +119,12 @@ class Attendance extends Model
 
         return sprintf('%d:%02d', $hours, $minutes);
     }
+
+    // 最新の修正レコードを取得
+    public function getLatestCorrectionAttribute()
+    {
+        return $this->attendanceCorrectionRequests
+            ->sortByDesc('created_at')
+            ->first();
+    }
 }
