@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\User\CorrectionRequestController;
 use Illuminate\Support\Facades\Route;
@@ -56,4 +57,8 @@ Route::prefix('admin')
             ->name('attendance.detail');
         Route::put('/attendance/{id}', [AdminAttendanceController::class, 'update'])
             ->name('attendance.update');
+        Route::get('/staff/list', [StaffController::class, 'list'])
+            ->name('staff.list');
+        Route::get('/attendance/staff/{id}', [AdminAttendanceController::class, 'staffMonthlyList'])
+            ->name('attendance.staff.monthly');
     });

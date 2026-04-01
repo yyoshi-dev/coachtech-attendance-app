@@ -139,4 +139,11 @@ class AttendanceController extends Controller
 
         return redirect()->route('admin.attendance.list'); // リダイレクト先は確認中
     }
+
+
+    // スタッフ別勤怠一覧表示
+    public function staffMonthlyList($id)
+    {
+        return view('admin.attendance.staff-monthly');
+    }
 }
