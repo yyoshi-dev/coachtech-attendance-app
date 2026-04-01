@@ -54,4 +54,6 @@ Route::prefix('admin')
             ->name('attendance.list');
         Route::get('/attendance/{id}', [AdminAttendanceController::class, 'detail'])
             ->name('attendance.detail');
+        Route::put('/attendance/{id}', [AdminAttendanceController::class, 'update'])
+            ->name('attendance.update');
     });
