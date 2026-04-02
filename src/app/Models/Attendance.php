@@ -98,7 +98,7 @@ class Attendance extends Model
     public function getBreakTotalFormattedAttribute()
     {
         if (!$this->breakTotal) {
-            return '';
+            return '0:00';
         }
 
         $hours = intdiv($this->breakTotal, 3600);
@@ -111,7 +111,7 @@ class Attendance extends Model
     public function getWorkTotalFormattedAttribute()
     {
         if (!$this->workTotal) {
-            return '';
+            return '0:00';
         }
 
         $hours = intdiv($this->workTotal, 3600);
