@@ -45,6 +45,7 @@
     cursor: pointer;
     color: #ffffff;
     background-color: #000000;
+    letter-spacing: 0.15em;
 }
 
 /* 共通フォームヘッダー */
