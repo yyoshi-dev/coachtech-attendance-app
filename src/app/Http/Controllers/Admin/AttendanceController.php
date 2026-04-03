@@ -138,9 +138,12 @@ class AttendanceController extends Controller
             }
         });
 
-        return redirect()->route('admin.attendance.list'); // リダイレクト先は確認中
+        return redirect()
+            ->route('admin.attendance.staff.monthly',[
+                'id' => $attendance->user_id,
+                'month' => $attendance->work_date->format('Y-m'),
+            ]);
     }
-
 
     // スタッフ別勤怠一覧表示
     public function staffMonthlyList(Request $request, $id)
