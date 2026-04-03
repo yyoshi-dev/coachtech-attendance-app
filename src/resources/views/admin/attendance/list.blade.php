@@ -19,7 +19,7 @@
 
 {{-- Content --}}
 @section('content')
-<div class="attendance-list attendance-list--admin">
+<div class="attendance-list">
     <h1 class="attendance-list__page-title page-title">{{ $targetDate->format('Y年n月j日') }}の勤怠</h1>
 
     <div class="attendance-list__nav">
