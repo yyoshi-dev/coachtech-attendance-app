@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\CorrectionRequestController as AdminCorrectionRequestController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\User\CorrectionRequestController;
@@ -63,4 +64,19 @@ Route::prefix('admin')
             ->name('attendance.staff.monthly');
         Route::get('/attendance/staff/{id}/export', [AdminAttendanceController::class, 'export'])
             ->name('attendance.staff.monthly.export');
+    });
+
+// 申請一覧画面 (管理者): 一般ユーザーと同じパスを使用する事が要件
+Route::get('/stamp_correction_request/list', [AdminCorrectionRequestController::class, 'indexCorrections'])
+    ->middleware(['auth', 'admin'])
+    ->name('admin.attendance.corrections.index');
+
+// 修正申請承認画面 (管理者): prefixのadminが不要
+Route::name('admin.')
+    ->middleware(['auth', 'admin'])
+    ->group(function () {
+        Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}',
+            [AdminCorrectionRequestController::class, 'detailCorrection']
+            )
+            ->name('attendance.corrections.detail');
     });
