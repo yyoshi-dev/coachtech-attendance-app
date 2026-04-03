@@ -61,4 +61,6 @@ Route::prefix('admin')
             ->name('staff.list');
         Route::get('/attendance/staff/{id}', [AdminAttendanceController::class, 'staffMonthlyList'])
             ->name('attendance.staff.monthly');
+        Route::get('/attendance/staff/{id}/export', [AdminAttendanceController::class, 'export'])
+            ->name('attendance.staff.monthly.export');
     });
