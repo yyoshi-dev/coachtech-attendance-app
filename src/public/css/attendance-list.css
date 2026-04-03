@@ -4,10 +4,6 @@
     align-items: center;
     width: 63%;
     margin: 0 auto;
-    padding-top: 40px;
-}
-
-.attendance-list--admin {
     padding-top: 90px;
 }
 
@@ -129,4 +125,12 @@
     color: #000000;
     text-decoration: none;
     cursor: not-allowed;
+}
+
+.attendance-list__export-btn {
+    width: 184px;
+    height: 50px;
+    font-size: 22px;
+    margin-left: auto;
+    margin-top: 60px;
 }
