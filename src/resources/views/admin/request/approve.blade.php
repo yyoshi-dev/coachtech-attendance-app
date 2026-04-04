@@ -63,138 +63,59 @@
         <dl class="correction-form__group">
             <dt class="correction-form__label">出勤・退勤</dt>
             <dd class="correction-form__item">
-                @if ($correction->status === 'approved')
-                    <div class="correction-form__text-group">
-                        <span class="correction-form__text">
-                            {{ $correction->requested_clock_in?->format('H:i') }}
-                        </span>
-                    </div>
-                    <span class="correction-form__separator">〜</span>
-                    <div class="correction-form__text-group">
-                        <span class="correction-form__text">
-                            {{ $correction->requested_clock_out?->format('H:i') }}
-                        </span>
-                    </div>
-                @else
-                    <div class="correction-form__text-group">
-                        <span class="correction-form__text">
-                            {{ $correction->requested_clock_in?->format('H:i') }}
-                        </span>
-                        <input
-                            type="hidden"
-                            name="requested_clock_in"
-                            value="{{ $correction->requested_clock_in?->format('H:i') }}"
-                        >
-                    </div>
-                    <span class="correction-form__separator">〜</span>
-                    <div class="correction-form__text-group">
-                        <span class="correction-form__text">
-                            {{ $correction->requested_clock_out?->format('H:i') }}
-                        </span>
-                        <input
-                            type="hidden"
-                            name="requested_clock_out"
-                            value="{{ $correction->requested_clock_out?->format('H:i') }}"
-                        >
-                    </div>
-                @endif
+                <div class="correction-form__text-group">
+                    <span class="correction-form__text">
+                        {{ $correction->requested_clock_in?->format('H:i') }}
+                    </span>
+                </div>
+                <span class="correction-form__separator">〜</span>
+                <div class="correction-form__text-group">
+                    <span class="correction-form__text">
+                        {{ $correction->requested_clock_out?->format('H:i') }}
+                    </span>
+                </div>
             </dd>
         </dl>
 
         {{-- 休憩 --}}
-        @if ($correction->status === 'approved')
-            @foreach ($correction->attendanceCorrectionRequestBreaks as $break)
-                <dl class="correction-form__group">
-                    <dt class="correction-form__label">
-                        休憩{{ $break->sort_order > 1 ? $break->sort_order : '' }}
-                    </dt>
-                    <dd class="correction-form__item">
-                        <div class="correction-form__text-group">
-                            <span class="correction-form__text">
-                                {{ $break->requested_break_start?->format('H:i') }}
-                            </span>
-                        </div>
-                        <span class="correction-form__separator">〜</span>
-                        <div class="correction-form__text-group">
-                            <span class="correction-form__text">
-                                {{ $break->requested_break_end?->format('H:i') }}
-                            </span>
-                        </div>
-                    </dd>
-                </dl>
-            @endforeach
+        @foreach ($correction->attendanceCorrectionRequestBreaks as $break)
             <dl class="correction-form__group">
                 <dt class="correction-form__label">
-                    休憩{{ $correction->attendanceCorrectionRequestBreaks->isEmpty()
-                        ? ''
-                        : $correction->attendanceCorrectionRequestBreaks->count() + 1 }}
+                    休憩{{ $break->sort_order > 1 ? $break->sort_order : '' }}
                 </dt>
-                <dd class="correction-form__item"></dd>
+                <dd class="correction-form__item">
+                    <div class="correction-form__text-group">
+                        <span class="correction-form__text">
+                            {{ $break->requested_break_start?->format('H:i') }}
+                        </span>
+                    </div>
+                    <span class="correction-form__separator">〜</span>
+                    <div class="correction-form__text-group">
+                        <span class="correction-form__text">
+                            {{ $break->requested_break_end?->format('H:i') }}
+                        </span>
+                    </div>
+                </dd>
             </dl>
-        @else
-            @foreach ($correction->attendanceCorrectionRequestBreaks as $index => $break)
-                <dl class="correction-form__group">
-                    <dt class="correction-form__label">
-                        休憩{{ $break->sort_order > 1 ? $break->sort_order : '' }}
-                    </dt>
-                    <dd class="correction-form__item">
-                        <input type="hidden" name="attendance_break_id[{{ $index }}]" value="{{ $break->attendance_break_id }}">
-                        <div class="correction-form__text-group">
-                            <span class="correction-form__text">
-                                {{ $break->requested_break_start?->format('H:i') }}
-                            </span>
-                            <input
-                                type="hidden"
-                                name="requested_break_start[{{ $index }}]"
-                                value="{{ $break->requested_break_start?->format('H:i') }}"
-                            >
-                        </div>
-                        <span class="correction-form__separator">〜</span>
-                        <div class="correction-form__text-group">
-                            <span class="correction-form__text">
-                                {{ $break->requested_break_end?->format('H:i') }}
-                            </span>
-                            <input
-                                type="hidden"
-                                name="requested_break_end[{{ $index }}]"
-                                value="{{ $break->requested_break_end?->format('H:i') }}"
-                            >
-                        </div>
-                    </dd>
-                </dl>
-            @endforeach
-            <dl class="correction-form__group">
-                <dt class="correction-form__label">
-                    休憩{{ $correction->attendanceCorrectionRequestBreaks->isEmpty()
-                        ? ''
-                        : $correction->attendanceCorrectionRequestBreaks->count() + 1 }}
-                </dt>
-                <dd class="correction-form__item"></dd>
-            </dl>
-        @endif
+        @endforeach
+        <dl class="correction-form__group">
+            <dt class="correction-form__label">
+                休憩{{ $correction->attendanceCorrectionRequestBreaks->isEmpty()
+                    ? ''
+                    : $correction->attendanceCorrectionRequestBreaks->count() + 1 }}
+            </dt>
+            <dd class="correction-form__item"></dd>
+        </dl>
 
         {{-- 備考 --}}
         <dl class="correction-form__group">
             <dt class="correction-form__label">備考</dt>
             <dd class="correction-form__item correction-form__item--textarea">
-                @if ($correction->status === 'approved')
-                    <div class="correction-form__text-group">
-                        <span class="correction-form__text correction-form__text--textarea">
-                            {{ $correction->request_remarks }}
-                        </span>
-                    </div>
-                @else
-                    <div class="correction-form__text-group">
-                        <span class="correction-form__text correction-form__text--textarea">
-                            {{ $correction->request_remarks }}
-                        </span>
-                        <input
-                            type="hidden"
-                            name="request_remarks"
-                            value="{{ $correction->request_remarks }}"
-                        >
-                    </div>
-                @endif
+                <div class="correction-form__text-group">
+                    <span class="correction-form__text correction-form__text--textarea">
+                        {{ $correction->request_remarks }}
+                    </span>
+                </div>
             </dd>
         </dl>
 
