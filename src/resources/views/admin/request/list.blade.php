@@ -68,7 +68,7 @@
                     </td>
                     <td class="request-table__item">
                         <a
-                            href="{{ route('admin.attendance.corrections.detail', [
+                            href="{{ route('admin.attendance.correction.detail', [
                                 'attendance_correct_request_id' => $correction->id
                             ]) }}"
                             class="request-table__detail-link"
