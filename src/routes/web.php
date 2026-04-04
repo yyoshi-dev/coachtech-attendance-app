@@ -78,5 +78,9 @@ Route::name('admin.')
         Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}',
             [AdminCorrectionRequestController::class, 'detailCorrection']
             )
-            ->name('attendance.corrections.detail');
+            ->name('attendance.correction.detail');
+        Route::put('/stamp_correction_request/approve/{attendance_correct_request_id}',
+            [AdminCorrectionRequestController::class, 'approveCorrection']
+            )
+            ->name('attendance.correction.approve');
     });
