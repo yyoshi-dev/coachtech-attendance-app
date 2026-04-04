@@ -36,6 +36,7 @@
     font-weight: bold;
     color: #737373;
     flex: 0 0 250px;
+    letter-spacing: 0.15em;
 }
 
 .correction-form__item {
@@ -63,6 +64,7 @@
     font-weight: bold;
     text-align: center;
     padding: 0 25px;
+    letter-spacing: 0.15em;
 }
 
 .correction-form__text {
@@ -134,4 +136,21 @@
     color: #ff0000;
     opacity: 0.5;
     letter-spacing: 0.1em;
+}
+
+.correction-form__approved-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 130px;
+    height: 50px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+    color: #ffffff;
+    background-color: #696969;
+    letter-spacing: 0.15em;
+    margin-left: auto;
 }
