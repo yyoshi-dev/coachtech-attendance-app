@@ -25,12 +25,12 @@
     {{-- タブ切り替え部分 --}}
     <div class="tab-menu">
         <a
-            href="{{ route('admin.attendance.corrections.index', ['tab' => 'pending']) }}" class="tab-menu__link {{ $tab === 'pending' ? 'tab-menu__link--active' : '' }}"
+            href="{{ route('attendance.corrections.index', ['tab' => 'pending']) }}" class="tab-menu__link {{ $tab === 'pending' ? 'tab-menu__link--active' : '' }}"
         >
             承認待ち
         </a>
         <a
-            href="{{ route('admin.attendance.corrections.index', ['tab' => 'approved']) }}" class="tab-menu__link {{ $tab === 'approved' ? 'tab-menu__link--active' : '' }}"
+            href="{{ route('attendance.corrections.index', ['tab' => 'approved']) }}" class="tab-menu__link {{ $tab === 'approved' ? 'tab-menu__link--active' : '' }}"
         >
             承認済み
         </a>
