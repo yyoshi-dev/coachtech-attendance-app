@@ -7,7 +7,6 @@ use App\Http\Requests\StoreAttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionRequest;
 use App\Models\AttendanceCorrectionRequestBreak;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CorrectionRequestController extends Controller
@@ -52,37 +51,5 @@ class CorrectionRequestController extends Controller
         }
 
         return redirect()->route('attendance.corrections.index');
-    }
-
-    // 申請一覧
-    public function indexCorrections(Request $request)
-    {
-        // タブ情報の取得
-        $tab = $request->query('tab', 'pending');
-
-        // 不正値はpendingに変換
-        if (!in_array($tab, ['pending', 'approved'], true)) {
-            $tab = 'pending';
-        }
-
-        /** @var User $user */
-        $user = Auth::user();
-
-        // 修正データの取得
-        $corrections = AttendanceCorrectionRequest::with([
-            'attendanceCorrectionRequestBreaks',
-            'attendance.attendanceBreaks',
-            'requestUser'
-            ])
-            ->where('request_user_id', $user->id)
-            ->where('status', $tab)
-            ->orderByDesc('created_at')
-            ->get();
-
-        return view('user.request.list', compact(
-            'tab',
-            'user',
-            'corrections',
-        ));
     }
 }
