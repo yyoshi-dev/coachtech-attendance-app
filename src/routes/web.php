@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\CorrectionRequestController as AdminCorrectionRequestController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\CorrectionRequestEntryController;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\User\CorrectionRequestController;
 use Illuminate\Support\Facades\Route;
@@ -43,8 +44,6 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
         ->name('attendance.detail');
     Route::post('/attendance/detail/{id}', [CorrectionRequestController::class, 'storeCorrection'])
         ->name('attendance.corrections.store');
-    Route::get('/stamp_correction_request/list', [CorrectionRequestController::class, 'indexCorrections'])
-        ->name('attendance.corrections.index');
 });
 
 // 管理者の画面
@@ -66,10 +65,10 @@ Route::prefix('admin')
             ->name('attendance.staff.monthly.export');
     });
 
-// 申請一覧画面 (管理者): 一般ユーザーと同じパスを使用する事が要件
-Route::get('/stamp_correction_request/list', [AdminCorrectionRequestController::class, 'indexCorrections'])
-    ->middleware(['auth', 'admin'])
-    ->name('admin.attendance.corrections.index');
+// 申請一覧画面: 一般ユーザーと管理者で同じパスを使用する事が要件
+Route::get('/stamp_correction_request/list', [CorrectionRequestEntryController::class, 'index'])
+    ->middleware(['auth', 'verified', 'correction.request.role'])
+    ->name('attendance.corrections.index');
 
 // 修正申請承認画面 (管理者): prefixのadminが不要
 Route::name('admin.')

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CorrectionRequestRoleMiddleware;
 use App\Http\Middleware\UserMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'user' => UserMiddleware::class,
+            'correction.request.role' => CorrectionRequestRoleMiddleware::class,
         ]);
 
         // authミドルウェアに弾かれた未ログインユーザーの遷移先
