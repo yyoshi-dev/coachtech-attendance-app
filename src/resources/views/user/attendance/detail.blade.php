@@ -60,7 +60,7 @@
         <dl class="correction-form__group">
             <dt class="correction-form__label">出勤・退勤</dt>
             <dd class="correction-form__item">
-                @if ($isPending)
+                @if ($mode !== 'edit')
                     <div class="correction-form__text-group">
                         <span class="correction-form__text">
                             {{ $correction->requested_clock_in?->format('H:i') }}
@@ -101,7 +101,7 @@
         </dl>
 
         {{-- 休憩 --}}
-        @if ($isPending)
+        @if ($mode !== 'edit')
             @if ($correction->attendanceCorrectionRequestBreaks->isNotEmpty())
                 @foreach ($correction->attendanceCorrectionRequestBreaks as $break)
                     <dl class="correction-form__group">
@@ -207,7 +207,7 @@
         <dl class="correction-form__group">
             <dt class="correction-form__label">備考</dt>
             <dd class="correction-form__item correction-form__item--textarea">
-                @if ($isPending)
+                @if ($mode !== 'edit')
                     <div class="correction-form__text-group">
                         <span class="correction-form__text correction-form__text--textarea">
                             {{ $correction->request_remarks }}
@@ -226,9 +226,13 @@
                 @endif
             </dd>
         </dl>
-        @if ($isPending)
+        @if ($mode === 'pending')
             <span class="correction-form__pending-message">
                 *承認待ちのため修正はできません。
+            </span>
+        @elseif ($mode === 'approved')
+            <span class="correction-form__approved-message">
+                承認済み
             </span>
         @else
             <button type="submit" class="correction-form__btn btn">修正</button>

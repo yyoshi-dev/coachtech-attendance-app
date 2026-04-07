@@ -216,18 +216,25 @@ class AttendanceController extends Controller
 
         // 勤怠一覧からの表示の場合
         } else {
-            $correction = $attendance->attendanceCorrectionRequests
-                ->sortByDesc('created_at')
-                ->first();
+            $correction = $attendance->latestCorrection;
         }
 
-        $isPending = $correction && $correction->status === 'pending';
+        // 表示モードの定義
+        if ($correctionId) {
+            $mode = $correction->status === 'pending'
+                ? 'pending'
+                : 'approved';
+        } else {
+            $mode = $correction && $correction->status === 'pending'
+                ? 'pending'
+                : 'edit';
+        }
 
         return view('user.attendance.detail', compact(
             'user',
             'attendance',
             'correction',
-            'isPending'
+            'mode'
         ));
     }
 }
