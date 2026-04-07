@@ -216,7 +216,7 @@ class AttendanceController extends Controller
 
             if ($attendance) {
                 $csvData[] = [
-                    'work_date' => $date->isoFormat('MM/DD(ddd)'),
+                    'work_date' => $date->isoFormat('YYYY/MM/DD(ddd)'),
                     'clock_in' => $attendance->clock_in?->format('H:i') ?? '',
                     'clock_out' => $attendance->clock_out?->format('H:i') ?? '',
                     'breakTotal' => $attendance->breakTotalFormatted,
@@ -224,7 +224,7 @@ class AttendanceController extends Controller
                 ];
             } else {
                 $csvData[] = [
-                    'work_date' => $date->isoFormat('MM/DD(ddd)'),
+                    'work_date' => $date->isoFormat('YYYY/MM/DD(ddd)'),
                     'clock_in' => '',
                     'clock_out' => '',
                     'breakTotal' => '',
@@ -241,11 +241,18 @@ class AttendanceController extends Controller
 
         $csv = "\xEF\xBB\xBF" . $csv; // BOM付UTF-8
 
+        $filename = sprintf(
+            'attendance_%s_%s_%s.csv',
+            $staff->id,
+            preg_replace('/[ 　]+/u', '_', $staff->name),
+            $targetDate->format('Ym')
+        );
+
         return response($csv)
             ->header('Content-type', 'text/csv; charset=UTF-8')
             ->header(
                 'Content-Disposition',
-                'attachment; filename="attendance-' . $targetDate->format('Y-m') . '.csv"'
+                'attachment; filename="' . $filename . '"'
             );
     }
 }
