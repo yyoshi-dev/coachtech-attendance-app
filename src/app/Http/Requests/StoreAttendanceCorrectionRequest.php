@@ -88,7 +88,6 @@ class StoreAttendanceCorrectionRequest extends FormRequest
         ];
     }
 
-
     /**
      * バリデーション前のデータ整形
      */
