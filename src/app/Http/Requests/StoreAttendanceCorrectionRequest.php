@@ -22,10 +22,18 @@ class StoreAttendanceCorrectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'requested_clock_in' => ['before_or_equal:requested_clock_out'],
-            'requested_clock_out' => ['after_or_equal:requested_clock_in'],
-            'requested_break_start.*' => ['after_or_equal:requested_clock_in', 'before_or_equal:requested_clock_out'],
-            'requested_break_end.*' => ['before_or_equal:requested_clock_out'],
+            'requested_clock_in' => ['required', 'before_or_equal:requested_clock_out'],
+            'requested_clock_out' => ['required', 'after_or_equal:requested_clock_in'],
+            'requested_break_start.*' => [
+                'required',
+                'after_or_equal:requested_clock_in',
+                'before_or_equal:requested_clock_out',
+            ],
+            'requested_break_end.*' => [
+                'required',
+                'before_or_equal:requested_clock_out',
+                'after_or_equal:requested_clock_in'
+            ],
             'request_remarks' => ['required'],
         ];
     }
@@ -33,14 +41,53 @@ class StoreAttendanceCorrectionRequest extends FormRequest
     public function messages()
     {
         return [
+            'requested_clock_in.required' => '出勤時間を入力してください',
             'requested_clock_in.before_or_equal' => '出勤時間もしくは退勤時間が不適切な値です',
+            'requested_clock_out.required' => '退勤時間を入力してください',
             'requested_clock_out.after_or_equal' => '出勤時間もしくは退勤時間が不適切な値です',
+            'requested_break_start.*.required' => '休憩開始時間を入力してください',
             'requested_break_start.*.after_or_equal' => '休憩時間が不適切な値です',
             'requested_break_start.*.before_or_equal' => '休憩時間が不適切な値です',
+            'requested_break_end.*.required' => '休憩終了時間を入力してください',
             'requested_break_end.*.before_or_equal' => '休憩時間もしくは退勤時間が不適切な値です',
+            'requested_break_end.*.after_or_equal' => '休憩時間が不適切な値です',
             'request_remarks.required' => '備考を記入してください',
         ];
     }
+
+    /**
+     * 休憩開始時間と終了時間の比較 (配列同士の比較)
+     */
+    public function after(): array
+    {
+        return [
+            function ($validator) {
+                $starts = $this->input('requested_break_start', []);
+                $ends = $this->input('requested_break_end', []);
+
+                foreach ($starts as $index => $start) {
+                    $end = $ends[$index] ?? null;
+
+                    if (blank($start) || blank($end)) {
+                        continue;
+                    }
+
+                    if ($start > $end) {
+                        $validator->errors()->add(
+                            "requested_break_start.$index",
+                            '休憩開始時間もしくは休憩終了時間が不適切な値です'
+                        );
+
+                        $validator->errors()->add(
+                            "requested_break_end.$index",
+                            '休憩開始時間もしくは休憩終了時間が不適切な値です'
+                        );
+                    }
+                }
+            }
+        ];
+    }
+
 
     /**
      * バリデーション前のデータ整形
