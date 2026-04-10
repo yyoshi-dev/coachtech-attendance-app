@@ -23,7 +23,7 @@ class AttendanceController extends Controller
         // ステータスの取得
         $attendance = Attendance::with('attendanceBreaks')
             ->where('user_id', Auth::id())
-            ->where('work_date', $workDate)
+            ->whereDate('work_date', $workDate)
             ->first();
 
         $status = $attendance ? $attendance->status : '勤務外';
