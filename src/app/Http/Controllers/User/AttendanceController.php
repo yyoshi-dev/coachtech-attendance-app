@@ -18,7 +18,7 @@ class AttendanceController extends Controller
         // 日時情報の取得
         $now = now();
         $workDate = $now->toDateString();
-        $currentDateTime = $now->toIso8601String();
+        $currentDateTime = $now;
 
         // ステータスの取得
         $attendance = Attendance::with('attendanceBreaks')

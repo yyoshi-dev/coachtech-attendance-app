@@ -25,8 +25,8 @@
 @section('content')
 <div class="attendance-content">
     <span class="attendance-status">{{ $status }}</span>
-    <span id="date" class="attendance-date"></span>
-    <span id="time" class="attendance-time"></span>
+    <span id="date" class="attendance-date">{{ $currentDateTime->isoFormat('YYYY年M月D日(ddd)') }}</span>
+    <span id="time" class="attendance-time">{{ $currentDateTime->isoFormat('HH:mm') }}</span>
 
     {{-- 時間のリアルタイム更新 --}}
     <script>
@@ -47,9 +47,6 @@
         document.getElementById('time').textContent =
             now.toTimeString().slice(0,5);
     }
-
-    // 初回描画
-    render();
 
     // 以降は0.5秒毎に日付と時間を更新
     setInterval(render, 500);
