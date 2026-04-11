@@ -37,10 +37,6 @@ class ClockInTest extends TestCase
      */
     public function test_user_can_clock_in(): void
     {
-        // 出勤時間を固定
-        Carbon::setTestNow('2026-04-10 09:00:00');
-        $clockIn = now()->toDateTimeString();
-
         // ログインして勤怠打刻画面を開く
         $response = $this->actingAs($this->user)
             ->get(route('attendance.index'));
@@ -53,6 +49,10 @@ class ClockInTest extends TestCase
         // 画面上に出勤ボタンが表示されている事を確認
         $response->assertSee('data-testid="clock-in-button"', false);
         $response->assertSeeText('出勤');
+
+        // 出勤時間を固定
+        Carbon::setTestNow('2026-04-10 09:00:00');
+        $clockIn = now()->toDateTimeString();
 
         // 出勤処理を行う
         $this->actingAs($this->user)
@@ -132,27 +132,24 @@ class ClockInTest extends TestCase
      */
     public function test_attendance_list_shows_clock_in_time(): void
     {
-        // 出勤時間を固定
-        Carbon::setTestNow('2026-04-10 09:00:00');
-        $clockIn = now()->toDateTimeString();
+        // 勤怠レコードがない事を確認
+        $this->assertDatabaseCount('attendances', 0);
 
         // ログインして勤怠打刻画面を開く
         $this->actingAs($this->user)
             ->get(route('attendance.index'))
             ->assertOk();
 
+        // 出勤時間を固定
+        Carbon::setTestNow('2026-04-10 09:00:00');
+        $clockIn = now()->toDateTimeString();
+
         // 出勤処理を行う
         $this->actingAs($this->user)
             ->post(route('attendance.clock-in'))
             ->assertRedirect(route('attendance.index'));
 
-        // 勤怠一覧を開く
-        $response = $this->actingAs($this->user)
-            ->get(route('attendance.list'));
-
-        $response->assertOk();
-
-        // 勤怠が一件だけである事を確認
+        // 勤怠が追加された事を確認
         $this->assertDatabaseCount('attendances', 1);
 
         // 出勤が登録された事を確認
@@ -163,6 +160,12 @@ class ClockInTest extends TestCase
         $this->assertSame($this->workDate, $attendance->work_date->format('Y-m-d'));
         $this->assertSame($clockIn, $attendance->clock_in->format('Y-m-d H:i:s'));
         $this->assertNull($attendance->clock_out);
+
+        // 勤怠一覧を開く
+        $response = $this->actingAs($this->user)
+            ->get(route('attendance.list'));
+
+        $response->assertOk();
 
         // 出勤時刻を確認
         $response->assertSeeInOrder([
