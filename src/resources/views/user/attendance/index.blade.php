@@ -58,23 +58,23 @@
             @case('勤務外')
                 <form action="{{ route('attendance.clock-in') }}" method="post" class="attendance-form__form">
                     @csrf
-                    <button type="submit" class="attendance-form__btn btn">出勤</button>
+                    <button data-testid="clock-in-button" type="submit" class="attendance-form__btn btn">出勤</button>
                 </form>
                 @break
             @case('出勤中')
                 <form action="{{ route('attendance.clock-out') }}" method="post" class="attendance-form__form">
                     @csrf
-                    <button type="submit" class="attendance-form__btn btn">退勤</button>
+                    <button data-testid="clock-out-button" type="submit" class="attendance-form__btn btn">退勤</button>
                 </form>
                 <form action="{{ route('attendance.break-start') }}" method="post" class="attendance-form__form">
                     @csrf
-                    <button type="submit" class="attendance-form__btn attendance-form__btn--break btn">休憩入</button>
+                    <button data-testid="break-start-button" type="submit" class="attendance-form__btn attendance-form__btn--break btn">休憩入</button>
                 </form>
                 @break
             @case('休憩中')
                 <form action="{{ route('attendance.break-end') }}" method="post" class="attendance-form__form">
                     @csrf
-                    <button type="submit" class="attendance-form__btn attendance-form__btn--break btn">休憩戻</button>
+                    <button data-testid="break-end-button" type="submit" class="attendance-form__btn attendance-form__btn--break btn">休憩戻</button>
                 </form>
                 @break
             @default

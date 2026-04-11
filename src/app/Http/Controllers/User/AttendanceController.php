@@ -46,7 +46,7 @@ class AttendanceController extends Controller
         // 既存データの確認
         $exists = Attendance::query()
             ->where('user_id', Auth::id())
-            ->where('work_date', $workDate)
+            ->whereDate('work_date', $workDate)
             ->exists();
 
         // 出勤登録
@@ -71,7 +71,7 @@ class AttendanceController extends Controller
         // 勤怠の取得
         $attendance = Attendance::query()
             ->where('user_id', Auth::id())
-            ->where('work_date', $workDate)
+            ->whereDate('work_date', $workDate)
             ->first();
 
         // 出勤していない場合、何もしない
@@ -99,7 +99,7 @@ class AttendanceController extends Controller
         // 勤怠の取得
         $attendance = Attendance::with('attendanceBreaks')
             ->where('user_id', Auth::id())
-            ->where('work_date', $workDate)
+            ->whereDate('work_date', $workDate)
             ->first();
 
         // 出勤していない場合、何もしない
@@ -132,7 +132,7 @@ class AttendanceController extends Controller
         // 勤怠の取得
         $attendance = Attendance::with('attendanceBreaks')
             ->where('user_id', Auth::id())
-            ->where('work_date', $workDate)
+            ->whereDate('work_date', $workDate)
             ->first();
 
         // 出勤していない場合、何もしない
