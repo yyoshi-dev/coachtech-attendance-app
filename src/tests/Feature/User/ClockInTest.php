@@ -173,4 +173,50 @@ class ClockInTest extends TestCase
             Carbon::parse($clockIn)->format('H:i'),
         ]);
     }
+
+    /**
+     * 項目: 出勤機能
+     * 内容: (オプション) 出勤中状態で再度出勤できない
+     */
+    public function test_user_cannot_clock_in_while_working(): void
+    {
+        // 出勤時間を定義
+        $clockIn  = Carbon::parse($this->workDate)->setTime(9, 0, 0);
+
+        // 出勤中の勤怠を作成
+        Attendance::factory()
+            ->for($this->user)
+            ->forWorkDate($this->workDate)
+            ->create([
+                'clock_in' => $clockIn,
+                'clock_out' => null,
+            ]);
+
+        // 勤怠レコードが1件である事を確認
+        $this->assertDatabaseCount('attendances', 1);
+
+        // ログインして勤怠打刻画面を開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.index'))
+            ->assertOk();
+
+        // 出勤時間を固定
+        Carbon::setTestNow('2026-04-10 13:00:00');
+
+        // 出勤処理を行う
+        $this->actingAs($this->user)
+            ->post(route('attendance.clock-in'))
+            ->assertRedirect(route('attendance.index'));
+
+        // 勤怠レコードが1件のままであり、内容も更新されていない事を確認
+        $this->assertDatabaseCount('attendances', 1);
+
+        $attendance = Attendance::where('user_id', $this->user->id)
+            ->whereDate('work_date', $this->workDate)
+            ->firstOrFail();
+
+        $this->assertSame($this->workDate, $attendance->work_date->format('Y-m-d'));
+        $this->assertSame($clockIn->format('Y-m-d H:i:s'), $attendance->clock_in->format('Y-m-d H:i:s'));
+        $this->assertNull($attendance->clock_out);
+    }
 }
