@@ -32,7 +32,7 @@
         <dl class="correction-form__group">
             <dt class="correction-form__label">名前</dt>
             <dd class="correction-form__item">
-                <span class="correction-form__text">
+                <span data-testid="user-name" class="correction-form__text">
                     {{ $user->name }}
                 </span>
             </dd>
@@ -43,13 +43,13 @@
             <dt class="correction-form__label">日付</dt>
             <dd class="correction-form__item">
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="work-date-year" class="correction-form__text">
                         {{ $attendance->work_date->format('Y') }}年
                     </span>
                 </div>
                 <span class="correction-form__separator"></span>
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="work-date-month-day" class="correction-form__text">
                         {{ $attendance->work_date->format('n月j日') }}
                     </span>
                 </div>
@@ -75,6 +75,7 @@
                 @else
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-clock-in-input"
                             type="time"
                             name="requested_clock_in"
                             value="{{ old('requested_clock_in', $attendance->clock_in?->format('H:i')) }}"
@@ -87,6 +88,7 @@
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-clock-out-input"
                             type="time"
                             name="requested_clock_out"
                             value="{{ old('requested_clock_out', $attendance->clock_out?->format('H:i')) }}"
@@ -147,6 +149,7 @@
                         <input type="hidden" name="attendance_break_id[{{ $index }}]" value="{{ $break->id }}">
                         <div class="correction-form__input-group">
                             <input
+                                data-testid="requested-break-start-input-{{ $index }}"
                                 type="time"
                                 name="requested_break_start[{{ $index }}]"
                                 value="{{ old('requested_break_start.' . $index, $break->break_start?->format('H:i')) }}"
@@ -159,6 +162,7 @@
                         <span class="correction-form__separator">〜</span>
                         <div class="correction-form__input-group">
                             <input
+                                data-testid="requested-break-end-input-{{ $index }}"
                                 type="time"
                                 name="requested_break_end[{{ $index }}]"
                                 value="{{ old('requested_break_end.' . $index, $break->break_end?->format('H:i')) }}"
@@ -178,6 +182,7 @@
                 <dd class="correction-form__item">
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-break-start-input-{{ $attendance->attendanceBreaks->count() }}"
                             type="time"
                             name="requested_break_start[{{ $attendance->attendanceBreaks->count() }}]"
                             value="{{ old('requested_break_start.' . $attendance->attendanceBreaks->count()) }}"
@@ -190,6 +195,7 @@
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-break-end-input-{{ $attendance->attendanceBreaks->count() }}"
                             type="time"
                             name="requested_break_end[{{ $attendance->attendanceBreaks->count() }}]"
                             value="{{ old('requested_break_end.' . $attendance->attendanceBreaks->count()) }}"
