@@ -22,6 +22,11 @@ class CorrectionRequestController extends Controller
             ->where('user_id', $user->id)
             ->firstOrFail();
 
+        // 最新の修正データが承認待ちの場合、申請処理を実施しない
+        if ($attendance->latestCorrection && $attendance->latestCorrection->status === 'pending') {
+            abort(403);
+        }
+
         $date = $attendance->work_date->toDateString();
 
         // 勤怠修正テーブルの作成
