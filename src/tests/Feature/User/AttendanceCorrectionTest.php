@@ -81,7 +81,8 @@ class AttendanceCorrectionTest extends TestCase
 
         // バリデーションメッセージを確認
         $response->assertSessionHasErrors([
-            'requested_clock_in' => '出勤時間もしくは退勤時間が不適切な値です'
+            'requested_clock_in' => '出勤時間もしくは退勤時間が不適切な値です',
+            'requested_clock_out' => '出勤時間もしくは退勤時間が不適切な値です',
         ]);
 
         // DBに修正データが登録されていない事を確認
@@ -718,5 +719,346 @@ class AttendanceCorrectionTest extends TestCase
 
         // 修正データが追加作成されていない事を確認
         $this->assertDatabaseCount('attendance_correction_requests', 1);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 出勤時間が未入力の場合、エラーメッセージが表示される
+     */
+    public function test_empty_clock_in_shows_error_message(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
+
+        // ログインして勤怠詳細ページを開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]))
+            ->assertOk();
+
+        // 出勤時間を未入力に設定した修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '',
+            'requested_clock_out' => '18:00',
+            'request_remarks' => 'test',
+        ];
+
+        // 修正処理の実施
+        $response = $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            );
+
+        // バリデーションメッセージを確認
+        $response->assertSessionHasErrors([
+            'requested_clock_in' => '出勤時間を入力してください',
+        ]);
+
+        // DBに修正データが登録されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 退勤時間が未入力の場合、エラーメッセージが表示される
+     */
+    public function test_empty_clock_out_shows_error_message(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
+
+        // ログインして勤怠詳細ページを開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]))
+            ->assertOk();
+
+        // 退勤時間を未入力に設定した修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:00',
+            'requested_clock_out' => '',
+            'request_remarks' => 'test',
+        ];
+
+        // 修正処理の実施
+        $response = $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            );
+
+        // バリデーションメッセージを確認
+        $response->assertSessionHasErrors([
+            'requested_clock_out' => '退勤時間を入力してください',
+        ]);
+
+        // DBに修正データが登録されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 休憩開始時間が未入力の場合、エラーメッセージが表示される
+     */
+    public function test_empty_break_start_shows_error_message(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
+
+        // 休憩を作成
+        $break = AttendanceBreak::factory()
+            ->for($attendance)
+            ->create([
+                'break_start' => $this->workDate->copy()->setTime(12, 00, 00),
+                'break_end' => $this->workDate->copy()->setTime(13, 00, 00),
+            ]);
+
+        // ログインして勤怠詳細ページを開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]))
+            ->assertOk();
+
+        // 休憩開始時間を未入力に設定した修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:00',
+            'requested_clock_out' => '18:00',
+            'request_remarks' => 'test',
+            'attendance_break_id' => [0 => $break->id],
+            'requested_break_start' => [0 => ''],
+            'requested_break_end' => [0 => '13:00'],
+        ];
+
+        // 修正処理の実施
+        $response = $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            );
+
+        // バリデーションメッセージを確認
+        $response->assertSessionHasErrors([
+            'requested_break_start.0' => '休憩開始時間を入力してください',
+        ]);
+
+        // DBに修正データが登録されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+        $this->assertDatabaseCount('attendance_correction_request_breaks', 0);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 休憩終了時間が未入力の場合、エラーメッセージが表示される
+     */
+    public function test_empty_break_end_shows_error_message(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
+
+        // 休憩を作成
+        $break = AttendanceBreak::factory()
+            ->for($attendance)
+            ->create([
+                'break_start' => $this->workDate->copy()->setTime(12, 00, 00),
+                'break_end' => $this->workDate->copy()->setTime(13, 00, 00),
+            ]);
+
+        // ログインして勤怠詳細ページを開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]))
+            ->assertOk();
+
+        // 休憩終了時間を未入力に設定した修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:00',
+            'requested_clock_out' => '18:00',
+            'request_remarks' => 'test',
+            'attendance_break_id' => [0 => $break->id],
+            'requested_break_start' => [0 => '12:00'],
+            'requested_break_end' => [0 => ''],
+        ];
+
+        // 修正処理の実施
+        $response = $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            );
+
+        // バリデーションメッセージを確認
+        $response->assertSessionHasErrors([
+            'requested_break_end.0' => '休憩終了時間を入力してください',
+        ]);
+
+        // DBに修正データが登録されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+        $this->assertDatabaseCount('attendance_correction_request_breaks', 0);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 休憩開始時間が出勤時間より前になっている場合、エラーメッセージが表示される
+     */
+    public function test_break_start_before_clock_in_shows_error_message(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
+
+        // 休憩を作成
+        $break = AttendanceBreak::factory()
+            ->for($attendance)
+            ->create([
+                'break_start' => $this->workDate->copy()->setTime(12, 00, 00),
+                'break_end' => $this->workDate->copy()->setTime(13, 00, 00),
+            ]);
+
+        // ログインして勤怠詳細ページを開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]))
+            ->assertOk();
+
+        // 休憩開始時間を出勤時間より前に設定した修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:00',
+            'requested_clock_out' => '18:00',
+            'request_remarks' => 'test',
+            'attendance_break_id' => [0 => $break->id],
+            'requested_break_start' => [0 => '07:00'],
+            'requested_break_end' => [0 => '13:00'],
+        ];
+
+        // 修正処理の実施
+        $response = $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            );
+
+        // バリデーションメッセージを確認
+        $response->assertSessionHasErrors([
+            'requested_break_start.0' => '休憩時間が不適切な値です'
+        ]);
+
+        // DBに修正データが登録されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+        $this->assertDatabaseCount('attendance_correction_request_breaks', 0);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 休憩終了時間が出勤時間より前になっている場合、エラーメッセージが表示される
+     */
+    public function test_break_end_before_clock_in_shows_error_message(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
+
+        // 休憩を作成
+        $break = AttendanceBreak::factory()
+            ->for($attendance)
+            ->create([
+                'break_start' => $this->workDate->copy()->setTime(12, 00, 00),
+                'break_end' => $this->workDate->copy()->setTime(13, 00, 00),
+            ]);
+
+        // ログインして勤怠詳細ページを開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]))
+            ->assertOk();
+
+        // 休憩終了時間を出勤時間より前に設定した修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:00',
+            'requested_clock_out' => '18:00',
+            'request_remarks' => 'test',
+            'attendance_break_id' => [0 => $break->id],
+            'requested_break_start' => [0 => '12:00'],
+            'requested_break_end' => [0 => '07:00'],
+        ];
+
+        // 修正処理の実施
+        $response = $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            );
+
+        // バリデーションメッセージを確認
+        $response->assertSessionHasErrors([
+            'requested_break_end.0' => '休憩時間が不適切な値です'
+        ]);
+
+        // DBに修正データが登録されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+        $this->assertDatabaseCount('attendance_correction_request_breaks', 0);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 休憩開始時間が休憩終了時間より後になっている場合、エラーメッセージが表示される
+     */
+    public function test_break_start_after_break_end_shows_error_message(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
+
+        // 休憩を作成
+        $break = AttendanceBreak::factory()
+            ->for($attendance)
+            ->create([
+                'break_start' => $this->workDate->copy()->setTime(12, 00, 00),
+                'break_end' => $this->workDate->copy()->setTime(13, 00, 00),
+            ]);
+
+        // ログインして勤怠詳細ページを開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]))
+            ->assertOk();
+
+        // 休憩開始時間を休憩終了時間より後に設定した修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:00',
+            'requested_clock_out' => '18:00',
+            'request_remarks' => 'test',
+            'attendance_break_id' => [0 => $break->id],
+            'requested_break_start' => [0 => '13:00'],
+            'requested_break_end' => [0 => '12:00'],
+        ];
+
+        // 修正処理の実施
+        $response = $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            );
+
+        // バリデーションメッセージを確認
+        $response->assertSessionHasErrors([
+            'requested_break_start.0' => '休憩開始時間もしくは休憩終了時間が不適切な値です',
+            'requested_break_end.0' => '休憩開始時間もしくは休憩終了時間が不適切な値です',
+        ]);
+
+        // DBに修正データが登録されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+        $this->assertDatabaseCount('attendance_correction_request_breaks', 0);
     }
 }
