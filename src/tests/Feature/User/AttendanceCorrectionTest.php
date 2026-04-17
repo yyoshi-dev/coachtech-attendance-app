@@ -65,7 +65,7 @@ class AttendanceCorrectionTest extends TestCase
             ->get(route('attendance.detail', ['id' => $attendance->id]))
             ->assertOk();
 
-        // 出勤時間を退勤時間より後に設定した修正データの作成
+        // 出勤時間を退勤時間より後に設定した修正データを作成
         $correctionData = [
             'requested_clock_in' => '19:00',
             'requested_clock_out' => '18:00',
@@ -113,7 +113,7 @@ class AttendanceCorrectionTest extends TestCase
             ->get(route('attendance.detail', ['id' => $attendance->id]))
             ->assertOk();
 
-        // 休憩開始時間を退勤時間より後に設定した修正データの作成
+        // 休憩開始時間を退勤時間より後に設定した修正データを作成
         $correctionData = [
             'requested_clock_in' => '09:00',
             'requested_clock_out' => '18:00',
@@ -165,7 +165,7 @@ class AttendanceCorrectionTest extends TestCase
             ->get(route('attendance.detail', ['id' => $attendance->id]))
             ->assertOk();
 
-        // 休憩終了時間を退勤時間より後に設定した修正データの作成
+        // 休憩終了時間を退勤時間より後に設定した修正データを作成
         $correctionData = [
             'requested_clock_in' => '09:00',
             'requested_clock_out' => '18:00',
@@ -209,7 +209,7 @@ class AttendanceCorrectionTest extends TestCase
             ->get(route('attendance.detail', ['id' => $attendance->id]))
             ->assertOk();
 
-        // 備考欄を未入力に設定した修正データの作成
+        // 備考欄を未入力に設定した修正データを作成
         $correctionData = [
             'requested_clock_in' => '09:00',
             'requested_clock_out' => '18:00',
@@ -261,7 +261,7 @@ class AttendanceCorrectionTest extends TestCase
             ->get(route('attendance.detail', ['id' => $attendance->id]))
             ->assertOk();
 
-        // 修正データの作成
+        // 修正データを作成
         $correctionData = [
             'requested_clock_in' => '09:15',
             'requested_clock_out' => '18:15',
@@ -648,5 +648,75 @@ class AttendanceCorrectionTest extends TestCase
             $approvedCorrection->requested_clock_out->format('H:i'),
         ], false);
         $responseApproved->assertSeeText('承認済み');
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 他の人の勤怠は修正申請できない
+     */
+    public function test_user_cannot_correct_other_user_attendance(): void
+    {
+        // 他のユーザーを作成
+        $other = User::factory()->create();
+
+        // 勤怠を作成
+        $attendance = $this->createAttendance($other, $this->workDate);
+
+        // 修正データが0件である事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+
+        // 修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:15',
+            'requested_clock_out' => '18:15',
+            'request_remarks' => 'test',
+        ];
+
+        // 修正処理の実施
+        $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            )
+            ->assertNotFound();
+
+        // 修正データが作成されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 0);
+    }
+
+    /**
+     * 項目: 勤怠詳細情報修正機能 (一般ユーザー)
+     * 内容: (オプション) 承認待ちの状態で再申請できない
+     */
+    public function test_user_cannot_request_when_request_is_pending(): void
+    {
+        // 勤怠を作成
+        $attendance = $this->createAttendance($this->user, $this->workDate);
+
+        // 修正データを作成
+        AttendanceCorrectionRequest::factory()
+            ->forAttendance($attendance)
+            ->create();
+
+        // 修正データが1件である事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 1);
+
+        // 再修正データを作成
+        $correctionData = [
+            'requested_clock_in' => '09:15',
+            'requested_clock_out' => '18:15',
+            'request_remarks' => 'test',
+        ];
+
+        // 修正処理の実施
+        $this->actingAs($this->user)
+            ->post(
+                route('attendance.corrections.store', ['id' => $attendance->id]),
+                $correctionData
+            )
+            ->assertForbidden();
+
+        // 修正データが追加作成されていない事を確認
+        $this->assertDatabaseCount('attendance_correction_requests', 1);
     }
 }
