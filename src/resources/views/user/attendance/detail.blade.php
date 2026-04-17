@@ -62,13 +62,13 @@
             <dd class="correction-form__item">
                 @if ($mode !== 'edit')
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text">
+                        <span data-testid="requested-clock-in-text" class="correction-form__text">
                             {{ $correction->requested_clock_in?->format('H:i') }}
                         </span>
                     </div>
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text">
+                        <span data-testid="requested-clock-out-text" class="correction-form__text">
                             {{ $correction->requested_clock_out?->format('H:i') }}
                         </span>
                     </div>
@@ -105,20 +105,20 @@
         {{-- 休憩 --}}
         @if ($mode !== 'edit')
             @if ($correction->attendanceCorrectionRequestBreaks->isNotEmpty())
-                @foreach ($correction->attendanceCorrectionRequestBreaks as $break)
+                @foreach ($correction->attendanceCorrectionRequestBreaks as $index => $break)
                     <dl class="correction-form__group">
                         <dt class="correction-form__label">
                             休憩{{ $break->sort_order > 1 ? $break->sort_order : '' }}
                         </dt>
                         <dd class="correction-form__item">
                             <div class="correction-form__text-group">
-                                <span class="correction-form__text">
+                                <span data-testid="requested-break-start-text-{{ $index }}" class="correction-form__text">
                                     {{ $break->requested_break_start?->format('H:i') }}
                                 </span>
                             </div>
                             <span class="correction-form__separator">〜</span>
                             <div class="correction-form__text-group">
-                                <span class="correction-form__text">
+                                <span data-testid="requested-break-end-text-{{ $index }}" class="correction-form__text">
                                     {{ $break->requested_break_end?->format('H:i') }}
                                 </span>
                             </div>
@@ -215,7 +215,7 @@
             <dd class="correction-form__item correction-form__item--textarea">
                 @if ($mode !== 'edit')
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text correction-form__text--textarea">
+                        <span data-testid="request-remarks-text" class="correction-form__text correction-form__text--textarea">
                             {{ $correction->request_remarks }}
                         </span>
                     </div>

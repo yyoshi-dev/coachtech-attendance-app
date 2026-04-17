@@ -35,7 +35,7 @@
         <dl class="correction-form__group">
             <dt class="correction-form__label">名前</dt>
             <dd class="correction-form__item">
-                <span class="correction-form__text">
+                <span data-testid="user-name" class="correction-form__text">
                     {{ $correction->attendance?->user?->name }}
                 </span>
             </dd>
@@ -46,13 +46,13 @@
             <dt class="correction-form__label">日付</dt>
             <dd class="correction-form__item">
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="work-date-year" class="correction-form__text">
                         {{ $correction->attendance?->work_date->format('Y') }}年
                     </span>
                 </div>
                 <span class="correction-form__separator"></span>
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="work-date-month-day" class="correction-form__text">
                         {{ $correction->attendance?->work_date->format('n月j日') }}
                     </span>
                 </div>
@@ -64,13 +64,13 @@
             <dt class="correction-form__label">出勤・退勤</dt>
             <dd class="correction-form__item">
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="requested-clock-in-text" class="correction-form__text">
                         {{ $correction->requested_clock_in?->format('H:i') }}
                     </span>
                 </div>
                 <span class="correction-form__separator">〜</span>
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="requested-clock-out-text" class="correction-form__text">
                         {{ $correction->requested_clock_out?->format('H:i') }}
                     </span>
                 </div>
@@ -78,20 +78,20 @@
         </dl>
 
         {{-- 休憩 --}}
-        @foreach ($correction->attendanceCorrectionRequestBreaks as $break)
+        @foreach ($correction->attendanceCorrectionRequestBreaks as $index => $break)
             <dl class="correction-form__group">
                 <dt class="correction-form__label">
                     休憩{{ $break->sort_order > 1 ? $break->sort_order : '' }}
                 </dt>
                 <dd class="correction-form__item">
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text">
+                        <span data-testid="requested-break-start-text-{{ $index }}" class="correction-form__text">
                             {{ $break->requested_break_start?->format('H:i') }}
                         </span>
                     </div>
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text">
+                        <span data-testid="requested-break-end-text-{{ $index }}" class="correction-form__text">
                             {{ $break->requested_break_end?->format('H:i') }}
                         </span>
                     </div>
@@ -112,7 +112,7 @@
             <dt class="correction-form__label">備考</dt>
             <dd class="correction-form__item correction-form__item--textarea">
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text correction-form__text--textarea">
+                    <span data-testid="request-remarks-text" class="correction-form__text correction-form__text--textarea">
                         {{ $correction->request_remarks }}
                     </span>
                 </div>
