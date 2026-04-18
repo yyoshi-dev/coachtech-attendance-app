@@ -59,7 +59,12 @@
         <tbody>
             @foreach ($users as $user)
                 @php $attendance = $user->attendances->first(); @endphp
-                <tr class="attendance-table__row">
+                <tr
+                    class="attendance-table__row"
+                    @isset($attendance)
+                        data-testid="attendance-row-{{ $attendance->id }}"
+                    @endisset
+                >
                     <td class="attendance-table__item">{{ $user->name }}</td>
                     <td class="attendance-table__item">
                         {{ $attendance && $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}
