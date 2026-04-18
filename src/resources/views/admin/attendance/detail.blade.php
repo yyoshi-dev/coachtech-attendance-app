@@ -33,7 +33,7 @@
         <dl class="correction-form__group">
             <dt class="correction-form__label">名前</dt>
             <dd class="correction-form__item">
-                <span class="correction-form__text">
+                <span data-testid="user-name" class="correction-form__text">
                     {{ $attendance->user->name }}
                 </span>
             </dd>
@@ -44,13 +44,13 @@
             <dt class="correction-form__label">日付</dt>
             <dd class="correction-form__item">
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="work-date-year" class="correction-form__text">
                         {{ $attendance->work_date->format('Y') }}年
                     </span>
                 </div>
                 <span class="correction-form__separator"></span>
                 <div class="correction-form__text-group">
-                    <span class="correction-form__text">
+                    <span data-testid="work-date-month-day" class="correction-form__text">
                         {{ $attendance->work_date->format('n月j日') }}
                     </span>
                 </div>
@@ -63,19 +63,20 @@
             <dd class="correction-form__item">
                 @if ($isPending)
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text">
+                        <span data-testid="requested-clock-in-text" class="correction-form__text">
                             {{ $latestCorrection->requested_clock_in?->format('H:i') }}
                         </span>
                     </div>
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text">
+                        <span data-testid="requested-clock-out-text" class="correction-form__text">
                             {{ $latestCorrection->requested_clock_out?->format('H:i') }}
                         </span>
                     </div>
                 @else
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-clock-in-input"
                             type="time"
                             name="requested_clock_in"
                             value="{{ old('requested_clock_in', $attendance->clock_in?->format('H:i')) }}"
@@ -88,6 +89,7 @@
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-clock-out-input"
                             type="time"
                             name="requested_clock_out"
                             value="{{ old('requested_clock_out', $attendance->clock_out?->format('H:i')) }}"
@@ -104,20 +106,20 @@
         {{-- 休憩 --}}
         @if ($isPending)
             @if ($latestCorrection->attendanceCorrectionRequestBreaks->isNotEmpty())
-                @foreach ($latestCorrection->attendanceCorrectionRequestBreaks as $break)
+                @foreach ($latestCorrection->attendanceCorrectionRequestBreaks as $index => $break)
                     <dl class="correction-form__group">
                         <dt class="correction-form__label">
                             休憩{{ $break->sort_order > 1 ? $break->sort_order : '' }}
                         </dt>
                         <dd class="correction-form__item">
                             <div class="correction-form__text-group">
-                                <span class="correction-form__text">
+                                <span data-testid="requested-break-start-text-{{ $index }}" class="correction-form__text">
                                     {{ $break->requested_break_start?->format('H:i') }}
                                 </span>
                             </div>
                             <span class="correction-form__separator">〜</span>
                             <div class="correction-form__text-group">
-                                <span class="correction-form__text">
+                                <span data-testid="requested-break-end-text-{{ $index }}" class="correction-form__text">
                                     {{ $break->requested_break_end?->format('H:i') }}
                                 </span>
                             </div>
@@ -148,6 +150,7 @@
                         <input type="hidden" name="attendance_break_id[{{ $index }}]" value="{{ $break->id }}">
                         <div class="correction-form__input-group">
                             <input
+                                data-testid="requested-break-start-input-{{ $index }}"
                                 type="time"
                                 name="requested_break_start[{{ $index }}]"
                                 value="{{ old('requested_break_start.' . $index, $break->break_start?->format('H:i')) }}"
@@ -160,6 +163,7 @@
                         <span class="correction-form__separator">〜</span>
                         <div class="correction-form__input-group">
                             <input
+                                data-testid="requested-break-end-input-{{ $index }}"
                                 type="time"
                                 name="requested_break_end[{{ $index }}]"
                                 value="{{ old('requested_break_end.' . $index, $break->break_end?->format('H:i')) }}"
@@ -179,6 +183,7 @@
                 <dd class="correction-form__item">
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-break-start-input-{{ $attendance->attendanceBreaks->count() }}"
                             type="time"
                             name="requested_break_start[{{ $attendance->attendanceBreaks->count() }}]"
                             value="{{ old('requested_break_start.' . $attendance->attendanceBreaks->count()) }}"
@@ -191,6 +196,7 @@
                     <span class="correction-form__separator">〜</span>
                     <div class="correction-form__input-group">
                         <input
+                            data-testid="requested-break-end-input-{{ $attendance->attendanceBreaks->count() }}"
                             type="time"
                             name="requested_break_end[{{ $attendance->attendanceBreaks->count() }}]"
                             value="{{ old('requested_break_end.' . $attendance->attendanceBreaks->count()) }}"
@@ -210,7 +216,7 @@
             <dd class="correction-form__item correction-form__item--textarea">
                 @if ($isPending)
                     <div class="correction-form__text-group">
-                        <span class="correction-form__text correction-form__text--textarea">
+                        <span data-testid="request-remarks-text" class="correction-form__text correction-form__text--textarea">
                             {{ $latestCorrection->request_remarks }}
                         </span>
                     </div>
