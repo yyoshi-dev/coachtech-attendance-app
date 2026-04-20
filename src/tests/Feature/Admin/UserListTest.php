@@ -354,4 +354,162 @@ class UserListTest extends TestCase
             $currentMonth->format('n月j日'),
         ], false);
     }
+
+    /**
+     * 項目: ユーザー情報取得機能 (管理者)
+     * 内容: (オプション) 「csv出力」を押下すると、選択した月で行った勤怠一覧がcsvでダウンロードできる
+     */
+    public function test_admin_can_export_attendance_list_csv(): void
+    {
+        // 前月・当月・翌月の日付を準備
+        $currentMonth = now()->startOfMonth();
+        $previousMonth = $currentMonth->copy()->subMonthNoOverflow();
+        $nextMonth = $currentMonth->copy()->addMonthNoOverflow();
+
+        // 勤怠を複数日付分作成
+        $currentAttendances = collect();
+        $previousAttendances = collect();
+        $nextAttendances = collect();
+
+        for ($i = 0; $i < 15; $i++) {
+            $currentDate = $currentMonth->copy()->addDays($i);
+            $previousDate = $previousMonth->copy()->addDays($i);
+            $nextDate = $nextMonth->copy()->addDays($i);
+
+
+            $currentAttendance = Attendance::factory()
+                ->for($this->user)
+                ->forWorkDate($currentDate)
+                ->create([
+                    'clock_in' => $currentDate->copy()->setTime(1, 0, 0),
+                    'clock_out' => $currentDate->copy()->setTime(2, 0, 0),
+                ]);
+
+            $previousAttendance = Attendance::factory()
+                ->for($this->user)
+                ->forWorkDate($previousDate)
+                ->create([
+                    'clock_in' => $previousDate->copy()->setTime(3, 0, 0),
+                    'clock_out' => $previousDate->copy()->setTime(4, 0, 0),
+                ]);
+
+            $nextAttendance = Attendance::factory()
+                ->for($this->user)
+                ->forWorkDate($nextDate)
+                ->create([
+                    'clock_in' => $nextDate->copy()->setTime(5, 0, 0),
+                    'clock_out' => $nextDate->copy()->setTime(6, 0, 0),
+                ]);
+
+            AttendanceBreak::factory()
+                ->for($currentAttendance)
+                ->create();
+
+            AttendanceBreak::factory()
+                ->for($previousAttendance)
+                ->create();
+
+            AttendanceBreak::factory()
+                ->for($nextAttendance)
+                ->create();
+
+            $currentAttendance->refresh();
+            $previousAttendance->refresh();
+            $nextAttendance->refresh();
+            $currentAttendances->push($currentAttendance);
+            $previousAttendances->push($previousAttendance);
+            $nextAttendances->push($nextAttendance);
+        }
+
+        // 管理者でログインして、勤怠一覧を開く
+        $response = $this->actingAs($this->admin)
+            ->get(route('admin.attendance.staff.monthly', [
+                'id' => $this->user->id,
+                'month' => $previousMonth->format('Y-m'),
+            ]));
+
+        $response->assertOk();
+
+        // csv出力リンクが正しいかを確認
+        $html = $response->getContent();
+
+        $this->assertStringContainsString(
+            route('admin.attendance.staff.monthly.export', [
+                'id' => $this->user->id,
+                'month' => $previousMonth->format('Y-m'),
+            ]),
+            $html
+        );
+
+        // csv出力を実行する
+        $csvResponse = $this->actingAs($this->admin)
+            ->get(route('admin.attendance.staff.monthly.export', [
+                'id' => $this->user->id,
+                'month' => $previousMonth->format('Y-m'),
+            ]));
+
+        $csvResponse->assertOk();
+
+        // ファイル名の確認
+        $filename = sprintf(
+            'attendance_%s_%s_%s.csv',
+            $this->user->id,
+            preg_replace('/[ 　]+/u', '_', $this->user->name),
+            $previousMonth->format('Ym')
+        );
+
+        $csvResponse->assertHeader(
+            'Content-Disposition',
+            'attachment; filename="' . $filename . '"'
+        );
+
+        // csvの中身を取得
+        $csvContent = $csvResponse->getContent();
+
+        // 選択した月のデータのみが含まれる事を確認
+        foreach ($currentAttendances as $attendance) {
+            $csvData = implode(',', [
+                $attendance->work_date->isoFormat('YYYY/MM/DD(ddd)'),
+                $attendance->clock_in?->format('H:i') ?? '',
+                $attendance->clock_out?->format('H:i') ?? '',
+                $attendance->breakTotalFormatted,
+                $attendance->workTotalFormatted,
+            ]);
+
+            $this->assertStringNotContainsString(
+                $csvData,
+                $csvContent
+            );
+        }
+
+        foreach ($previousAttendances as $attendance) {
+            $csvData = implode(',', [
+                $attendance->work_date->isoFormat('YYYY/MM/DD(ddd)'),
+                $attendance->clock_in?->format('H:i') ?? '',
+                $attendance->clock_out?->format('H:i') ?? '',
+                $attendance->breakTotalFormatted,
+                $attendance->workTotalFormatted,
+            ]);
+
+            $this->assertStringContainsString(
+                $csvData,
+                $csvContent
+            );
+        }
+
+        foreach ($nextAttendances as $attendance) {
+            $csvData = implode(',', [
+                $attendance->work_date->isoFormat('YYYY/MM/DD(ddd)'),
+                $attendance->clock_in?->format('H:i') ?? '',
+                $attendance->clock_out?->format('H:i') ?? '',
+                $attendance->breakTotalFormatted,
+                $attendance->workTotalFormatted,
+            ]);
+
+            $this->assertStringNotContainsString(
+                $csvData,
+                $csvContent
+            );
+        }
+    }
 }
