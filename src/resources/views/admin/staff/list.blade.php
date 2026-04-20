@@ -32,7 +32,7 @@
         </thead>
         <tbody>
             @foreach ($staffs as $staff)
-                <tr class="staff-table__row">
+                <tr data-testid="staff-row-{{ $staff->id }}" class="staff-table__row">
                     <td class="staff-table__item">{{ $staff->name }}</td>
                     <td class="staff-table__item">{{ $staff->email }}</td>
                     <td class="staff-table__item">
