@@ -307,7 +307,6 @@ class UserListTest extends TestCase
         );
     }
 
-
     /**
      * 項目: ユーザー情報取得機能 (管理者)
      * 内容: 「詳細」を押下すると、その日の勤怠詳細画面に遷移する
@@ -375,7 +374,6 @@ class UserListTest extends TestCase
             $currentDate = $currentMonth->copy()->addDays($i);
             $previousDate = $previousMonth->copy()->addDays($i);
             $nextDate = $nextMonth->copy()->addDays($i);
-
 
             $currentAttendance = Attendance::factory()
                 ->for($this->user)
