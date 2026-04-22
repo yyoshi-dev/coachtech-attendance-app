@@ -50,7 +50,7 @@
         </thead>
         <tbody>
             @foreach ($corrections as $correction)
-                <tr class="request-table__row">
+                <tr data-testid="correction-row-{{ $correction->id }}" class="request-table__row">
                     <td class="request-table__item">
                         {{ $correction->statusLabel }}
                     </td>
