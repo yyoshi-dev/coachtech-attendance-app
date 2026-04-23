@@ -15,6 +15,10 @@ class LoginResponse implements FortifyLoginResponse
             return redirect()->route('admin.attendance.list');
         }
 
+        if (! $user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
         return redirect()->route('attendance.index');
     }
 
