@@ -98,4 +98,71 @@ class EmailVerificationTest extends TestCase
         // DBが更新されている事を確認
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
+
+    /**
+     * 項目: メール認証機能
+     * 内容: (オプション) メール未認証ユーザーが認証必須画面へアクセスすると、メール認証誘導画面へ飛ばされる
+     */
+    public function test_unverified_user_is_redirected_to_verification_notice_when_accessing_protected_pages(): void
+    {
+        // メール未認証のユーザーを作成
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        // 認証必須画面へアクセスすると、メール認証誘導画面にリダイレクトされる事を確認
+        $this->actingAs($user)
+            ->get(route('attendance.index'))
+            ->assertRedirect(route('verification.notice'));
+    }
+
+    /**
+     * 項目: メール認証機能
+     * 内容: (オプション) メール認証誘導画面で「認証メールを再送する」ボタンをクリックすると、認証メールが再送信される
+     */
+    public function test_verification_email_is_resent_from_verification_notice(): void
+    {
+        // メール送信を擬装
+        Notification::fake();
+
+        // メール未認証のユーザーを作成
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        // メール認証誘導画面を開く
+        $response = $this->actingAs($user)
+            ->get(route('verification.notice'));
+
+        // 「認証メールを再送する」ボタンがある事を確認
+        $response->assertOk()
+            ->assertSeeText('認証メールを再送する');
+
+        // 「認証メールを再送する」ボタンを押すと、認証メールが再送される事を確認
+        $this->actingAs($user)
+            ->post(route('verification.send'))
+            ->assertRedirect(route('verification.notice'));
+
+        Notification::assertSentToTimes($user, VerifyEmail::class, 1);
+    }
+
+    /**
+     * 項目: メール認証機能
+     * 内容: (オプション) メール未認証状態でログインした場合、メール認証誘導画面に遷移する
+     */
+    public function test_unverified_user_is_redirected_to_verification_notice_after_login(): void
+    {
+        // メール未認証のユーザーを作成
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+            'password' => Hash::make('test1234'),
+        ]);
+
+        // ログインすると、メール認証誘導画面に遷移する事を確認
+        $this->post('/login', [
+                'email' => $user->email,
+                'password' => 'test1234',
+            ])
+            ->assertRedirect(route('verification.notice'));
+    }
 }
