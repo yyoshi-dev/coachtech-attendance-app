@@ -21,5 +21,4 @@ class LoginResponse implements FortifyLoginResponse
 
         return redirect()->route('attendance.index');
     }
-
 }
