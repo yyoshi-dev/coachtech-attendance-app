@@ -38,7 +38,7 @@ class StoreAttendanceCorrectionRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'requested_clock_in.required' => '出勤時間を入力してください',
