@@ -24,7 +24,7 @@ class AttendanceCorrectionRequestBreakFactory extends Factory
             'attendance_break_id' => null,
             'requested_break_start' => now(),
             'requested_break_end' => now()->addHour(),
-            'sort_order' => 1
+            'sort_order' => 1,
         ];
     }
 
@@ -32,7 +32,8 @@ class AttendanceCorrectionRequestBreakFactory extends Factory
         AttendanceCorrectionRequest $request,
         AttendanceBreak $break,
         int $sortOrder = 1
-    ): static {
+    ): static
+    {
         // 休憩開始・終了時間
         $breakStart = Carbon::parse($break->break_start);
         $breakEnd = Carbon::parse($break->break_end);
@@ -50,8 +51,8 @@ class AttendanceCorrectionRequestBreakFactory extends Factory
         return $this->state([
             'attendance_correction_request_id' => $request->id,
             'attendance_break_id' => $break->id,
-            'requested_break_start' =>  $requestedBreakStart,
-            'requested_break_end' =>$requestedBreakEnd ,
+            'requested_break_start' => $requestedBreakStart,
+            'requested_break_end' => $requestedBreakEnd,
             'sort_order' => $sortOrder,
         ]);
     }
