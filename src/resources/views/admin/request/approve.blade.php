@@ -26,7 +26,7 @@
         action="{{ route('admin.attendance.correction.approve', [
             'attendance_correct_request_id' => $correction->id]) }}"
         method="post"
-        class="correction-form correction-form--approve"
+        class="correction-form"
     >
         @csrf
         @method('put')
