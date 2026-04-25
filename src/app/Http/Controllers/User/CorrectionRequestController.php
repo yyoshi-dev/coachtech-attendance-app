@@ -14,7 +14,7 @@ class CorrectionRequestController extends Controller
     // 修正申請
     public function storeCorrection(StoreAttendanceCorrectionRequest $request, $id)
     {
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $attendance = Attendance::query()

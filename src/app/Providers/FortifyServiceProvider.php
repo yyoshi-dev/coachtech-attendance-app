@@ -76,7 +76,7 @@ class FortifyServiceProvider extends ServiceProvider
         // ログイン認証
         Fortify::authenticateUsing(function (Request $request) {
             // ロールを定義
-            $role = $request->login_type === 'admin' ? 'admin': 'user';
+            $role = $request->login_type === 'admin' ? 'admin' : 'user';
 
             // ユーザーを取得
             $user = User::where('email', $request->email)

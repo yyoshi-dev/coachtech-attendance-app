@@ -15,9 +15,7 @@ class CorrectionRequestController extends Controller
         // 勤怠情報の取得
         $correction = AttendanceCorrectionRequest::with([
             'attendance.user',
-        ])
-        ->findOrFail($attendance_correct_request_id);
-
+        ])->findOrFail($attendance_correct_request_id);
 
         return view('admin.request.approve', compact('correction'));
     }
@@ -25,22 +23,20 @@ class CorrectionRequestController extends Controller
     // 修正申請の承認
     public function approveCorrection($attendance_correct_request_id)
     {
-        /** @var User $admin */
+        /** @var \App\Models\User $admin */
         $admin = Auth::user();
 
         // 修正情報の取得
         $correction = AttendanceCorrectionRequest::with([
             'attendanceCorrectionRequestBreaks',
             'attendance.attendanceBreaks',
-        ])
-        ->findOrFail($attendance_correct_request_id);
+        ])->findOrFail($attendance_correct_request_id);
 
         // 修正テーブルのステータス確認
         if ($correction->status !== 'pending') {
-            return redirect()
-                ->route('admin.attendance.correction.detail',
-                ['attendance_correct_request_id' => $attendance_correct_request_id]
-                );
+            return redirect()->route('admin.attendance.correction.detail', [
+                'attendance_correct_request_id' => $attendance_correct_request_id,
+            ]);
         }
 
         DB::transaction(function () use ($correction, $admin) {
@@ -77,7 +73,7 @@ class CorrectionRequestController extends Controller
         });
 
         return redirect()
-            ->route('admin.attendance.staff.monthly',[
+            ->route('admin.attendance.staff.monthly', [
                 'id' => $correction->attendance->user_id,
                 'month' => $correction->attendance->work_date->format('Y-m'),
             ]);
