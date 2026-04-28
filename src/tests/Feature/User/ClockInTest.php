@@ -107,6 +107,9 @@ class ClockInTest extends TestCase
         $response->assertSee('お疲れ様でした。');
 
         // ボタン非表示だけでなく、直POSTでも再出勤出来ない事を確認
+        // 現在時刻をsetupの時刻からずらす
+        Carbon::setTestNow('2026-04-10 19:00:00');
+
         // 出勤を直で実行
         $this->actingAs($this->user)
             ->post(route('attendance.clock-in'))
