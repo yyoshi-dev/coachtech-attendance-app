@@ -88,7 +88,7 @@ class AttendanceCorrectionTest extends TestCase
     public function test_all_pending_correction_requests_are_displayed(): void
     {
         // 勤怠用の日付リストを作成
-        $start = now()->subMonthNoOverflow(1)->startOfMonth();
+        $start = now()->subMonthNoOverflow()->startOfMonth();
         $end = $start->copy()->addDays(13);
         $dates = $start->daysUntil($end);
 
@@ -175,7 +175,7 @@ class AttendanceCorrectionTest extends TestCase
     public function test_all_approved_correction_requests_are_displayed(): void
     {
         // 勤怠用の日付リストを作成
-        $start = now()->subMonthNoOverflow(1)->startOfMonth();
+        $start = now()->subMonthNoOverflow()->startOfMonth();
         $end = $start->copy()->addDays(13);
         $dates = $start->daysUntil($end);
 
@@ -347,7 +347,7 @@ class AttendanceCorrectionTest extends TestCase
             $pendingCorrection->request_remarks,
         ], false);
 
-        // 承認ボタンが表示され、承認済みボタンが表示されない事を確認
+        // 承認ボタンが表示され、承認済みが表示されない事を確認
         $pendingResponse->assertSeeText('承認');
         $pendingResponse->assertDontSeeText('承認済み');
 
@@ -568,7 +568,7 @@ class AttendanceCorrectionTest extends TestCase
     public function test_re_correction_requests_are_displayed_correctly_in_pending_tab(): void
     {
         // 勤怠用の日付リストを作成
-        $start = now()->subMonthNoOverflow(1)->startOfMonth();
+        $start = now()->subMonthNoOverflow()->startOfMonth();
         $end = $start->copy()->addDays(13);
         $dates = $start->daysUntil($end);
 
@@ -688,7 +688,7 @@ class AttendanceCorrectionTest extends TestCase
     public function test_re_correction_requests_are_displayed_correctly_in_approved_tab(): void
     {
         // 勤怠用の日付リストを作成
-        $start = now()->subMonthNoOverflow(1)->startOfMonth();
+        $start = now()->subMonthNoOverflow()->startOfMonth();
         $end = $start->copy()->addDays(13);
         $dates = $start->daysUntil($end);
 
