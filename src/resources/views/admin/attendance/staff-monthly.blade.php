@@ -20,7 +20,7 @@
 {{-- Content --}}
 @section('content')
 <div class="attendance-list">
-    <h1 class="attendance-list__page-title page-title">{{ $staff->name }}の勤怠</h1>
+    <h1 class="attendance-list__page-title page-title">{{ $staff->name }}さんの勤怠</h1>
 
     {{-- 月選択部分 --}}
     <div class="attendance-list__nav">
