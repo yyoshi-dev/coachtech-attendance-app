@@ -74,12 +74,14 @@ Route::get('/stamp_correction_request/list', [CorrectionRequestEntryController::
 Route::name('admin.')
     ->middleware(['auth', 'admin'])
     ->group(function () {
-        Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}',
+        Route::get(
+            '/stamp_correction_request/approve/{attendance_correct_request_id}',
             [AdminCorrectionRequestController::class, 'detailCorrection']
-            )
+        )
             ->name('attendance.correction.detail');
-        Route::put('/stamp_correction_request/approve/{attendance_correct_request_id}',
+        Route::put(
+            '/stamp_correction_request/approve/{attendance_correct_request_id}',
             [AdminCorrectionRequestController::class, 'approveCorrection']
-            )
+        )
             ->name('attendance.correction.approve');
     });

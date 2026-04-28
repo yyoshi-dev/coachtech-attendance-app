@@ -18,13 +18,13 @@ class CorrectionRequestEntryController extends Controller
         $tab = $request->query('tab', 'pending');
 
         // 不正値はpendingに変換
-        if (!in_array($tab, ['pending', 'approved'], true)) {
+        if (! in_array($tab, ['pending', 'approved'], true)) {
             $tab = 'pending';
         }
 
         // 一般ユーザーの場合
         if ($role === 'user') {
-            /** @var User $user */
+            /** @var \App\Models\User $user */
             $user = Auth::user();
 
             $corrections = AttendanceCorrectionRequest::with('attendance.user')

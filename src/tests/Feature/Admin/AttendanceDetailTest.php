@@ -357,7 +357,7 @@ class AttendanceDetailTest extends TestCase
 
     /**
      * 項目: 勤怠詳細情報取得・修正機能 (管理者)
-     * 内容: 直接修正処理が実行される
+     * 内容: (オプション) 直接修正処理が実行される
      */
     public function test_admin_can_update_attendance(): void
     {

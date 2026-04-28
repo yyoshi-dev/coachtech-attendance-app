@@ -32,7 +32,7 @@ class AttendanceController extends Controller
         return view('user.attendance.index', compact(
             'status',
             'currentDateTime',
-            'isAfterWork'
+            'isAfterWork',
         ));
     }
 
@@ -50,7 +50,7 @@ class AttendanceController extends Controller
             ->exists();
 
         // 出勤登録
-        if (!$exists) {
+        if (! $exists) {
             Attendance::create([
                 'user_id' => Auth::id(),
                 'work_date' => $workDate,
@@ -193,14 +193,14 @@ class AttendanceController extends Controller
     {
         $correctionId = $request->query('correction_id');
 
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // 勤怠情報の取得
         $attendance = Attendance::with([
-                'attendanceBreaks',
-                'attendanceCorrectionRequests.attendanceCorrectionRequestBreaks',
-            ])
+            'attendanceBreaks',
+            'attendanceCorrectionRequests.attendanceCorrectionRequestBreaks',
+        ])
             ->where('id', $id)
             ->where('user_id', $user->id)
             ->firstOrFail();
@@ -212,7 +212,7 @@ class AttendanceController extends Controller
                 ->where('id', $correctionId)
                 ->first();
 
-            abort_if(!$correction, 404);
+            abort_if(! $correction, 404);
 
         // 勤怠一覧からの表示の場合
         } else {
@@ -234,7 +234,7 @@ class AttendanceController extends Controller
             'user',
             'attendance',
             'correction',
-            'mode'
+            'mode',
         ));
     }
 }

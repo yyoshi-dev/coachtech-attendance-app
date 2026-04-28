@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
         foreach ($users as $user) {
             $userAttendances = collect();
 
-            foreach($dates as $date) {
+            foreach ($dates as $date) {
                 // 出退勤時間
                 $attendance = Attendance::factory()
                     ->recycle($user)
@@ -116,6 +116,6 @@ class DatabaseSeeder extends Seeder
                     )
                     ->create();
             }
-            }
+        }
     }
 }

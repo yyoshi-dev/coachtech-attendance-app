@@ -11,7 +11,7 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $user;
+    protected User $user;
 
     protected function setUp(): void
     {
