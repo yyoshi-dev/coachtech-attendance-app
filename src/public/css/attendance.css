@@ -20,6 +20,7 @@
     background-color: #c8c8c8;
     border-radius: 50px;
     margin-bottom: 24px;
+    letter-spacing: 0.15em;
 }
 
 .attendance-date {
@@ -59,4 +60,5 @@
 .attendance-form__clock-out {
     font-size: 26px;
     font-weight: bold;
+    letter-spacing: 0.15em;
 }
