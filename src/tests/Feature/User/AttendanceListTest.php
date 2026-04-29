@@ -273,4 +273,49 @@ class AttendanceListTest extends TestCase
         $detailResponse->assertSeeText($attendance->work_date->format('Y') . '年');
         $detailResponse->assertSeeText($attendance->work_date->format('n月j日'));
     }
+
+    /**
+     * 項目: 勤怠一覧情報取得機能 (一般ユーザー)
+     * 内容: (オプション) 月末日でも指定月の情報が正しく表示される
+     */
+    public function test_requested_month_is_displayed_correctly_even_when_current_day_is_month_end(): void
+    {
+        // 現在日付を月末に設定
+        Carbon::setTestNow('2026-03-30 00:00:00');
+
+        // 勤怠を作成
+        $requestedMonth = Carbon::parse('2026-02-01')->startOfMonth();
+        $otherMonth = Carbon::parse('2026-03-01')->startOfMonth();
+
+        $requestedMonthAttendance = Attendance::factory()
+            ->for($this->user)
+            ->forWorkDate($requestedMonth)
+            ->create();
+
+        $otherMonthAttendance = Attendance::factory()
+            ->for($this->user)
+            ->forWorkDate($otherMonth)
+            ->create();
+
+        // 月末日の当月一覧を開く
+        $this->actingAs($this->user)
+            ->get(route('attendance.list'))
+            ->assertOk();
+
+        // 前月ボタン相当の月指定で一覧を開く
+        $response = $this->actingAs($this->user)
+            ->get(route('attendance.list', [
+                'month' => $requestedMonth->format('Y-m'),
+            ]));
+
+        // 指定した月のデータのみ表示される事を確認
+        $response->assertOk();
+        $response->assertSeeText($requestedMonth->format('Y/m'));
+        $response->assertSeeText(
+            Carbon::parse($requestedMonthAttendance->work_date)->isoFormat('MM/DD(ddd)')
+        );
+        $response->assertDontSeeText(
+            Carbon::parse($otherMonthAttendance->work_date)->isoFormat('MM/DD(ddd)')
+        );
+    }
 }
