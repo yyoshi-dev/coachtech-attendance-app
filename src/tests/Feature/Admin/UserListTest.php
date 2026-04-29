@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Models\Attendance;
 use App\Models\AttendanceBreak;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -22,6 +23,12 @@ class UserListTest extends TestCase
         $this->user = User::factory()->create();
         $this->admin = User::factory()
             ->create(['role' => 'admin']);
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        parent::tearDown();
     }
 
     /**
@@ -509,5 +516,59 @@ class UserListTest extends TestCase
                 $csvContent
             );
         }
+    }
+
+    /**
+     * 項目: ユーザー情報取得機能 (管理者)
+     * 内容: (オプション) 月末日でも指定月のスタッフ別勤怠一覧が正しく表示される
+     */
+    public function test_admin_can_view_requested_month_attendance_even_when_current_day_is_month_end(): void
+    {
+        // 現在日付を月末に設定
+        Carbon::setTestNow('2026-03-30 00:00:00');
+
+        // 勤怠を作成
+        $requestedMonth = Carbon::parse('2026-02-01')->startOfMonth();
+        $otherMonth = Carbon::parse('2026-03-01')->startOfMonth();
+
+        $requestedMonthAttendance = Attendance::factory()
+            ->for($this->user)
+            ->forWorkDate($requestedMonth)
+            ->create([
+                'clock_in' => $requestedMonth->copy()->setTime(9, 0, 0),
+                'clock_out' => $requestedMonth->copy()->setTime(18, 0, 0),
+            ]);
+
+        $otherMonthAttendance = Attendance::factory()
+            ->for($this->user)
+            ->forWorkDate($otherMonth)
+            ->create([
+                'clock_in' => $otherMonth->copy()->setTime(9, 0, 0),
+                'clock_out' => $otherMonth->copy()->setTime(18, 0, 0),
+            ]);
+
+        // 月末日の当月一覧を開く
+        $this->actingAs($this->admin)
+            ->get(route('admin.attendance.staff.monthly', [
+                'id' => $this->user->id,
+            ]))
+            ->assertOk();
+
+        // 前月ボタン相当の月指定で一覧を開く
+        $response = $this->actingAs($this->admin)
+            ->get(route('admin.attendance.staff.monthly', [
+                'id' => $this->user->id,
+                'month' => $requestedMonth->format('Y-m'),
+            ]));
+
+        // 指定した月のデータのみ表示される事を確認
+        $response->assertOk();
+        $response->assertSeeText($requestedMonth->format('Y/m'));
+        $response->assertSeeText(
+            $requestedMonthAttendance->work_date->isoFormat('MM/DD(ddd)')
+        );
+        $response->assertDontSeeText(
+            $otherMonthAttendance->work_date->isoFormat('MM/DD(ddd)')
+        );
     }
 }

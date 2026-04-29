@@ -153,7 +153,7 @@ class AttendanceController extends Controller
         // 表示対象月
         $requestMonth = $request->query('month');
         $targetDate = $requestMonth
-            ? Carbon::createFromFormat('Y-m', $requestMonth)->startOfMonth()
+            ? Carbon::createFromFormat('!Y-m', $requestMonth)->startOfMonth()
             : now()->startOfMonth();
 
         $start = $targetDate->copy();
@@ -193,7 +193,7 @@ class AttendanceController extends Controller
         // 出力対象期間の作成
         $requestMonth = $request->query('month');
         $targetDate = $requestMonth
-            ? Carbon::createFromFormat('Y-m', $requestMonth)->startOfMonth()
+            ? Carbon::createFromFormat('!Y-m', $requestMonth)->startOfMonth()
             : now()->startOfMonth();
 
         $start = $targetDate->copy();
