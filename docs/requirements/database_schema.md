@@ -25,6 +25,7 @@
 | work_date  | date            |             | (user_id, work_date) | ○        |             |
 | clock_in   | datetime        |             |                      |          |             |
 | clock_out  | datetime        |             |                      |          |             |
+| remarks    | varchar(255)    |             |                      |          |             |
 | created_at | timestamp       |             |                      |          |             |
 | updated_at | timestamp       |             |                      |          |             |
 

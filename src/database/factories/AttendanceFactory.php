@@ -25,6 +25,7 @@ class AttendanceFactory extends Factory
 
         return [
             'user_id' => User::factory(),
+            'remarks' => null,
             ...$this->buildAttendanceTimes($workDate),
         ];
     }
@@ -39,7 +40,10 @@ class AttendanceFactory extends Factory
             ? $date->copy()->startOfDay()
             : Carbon::parse($date)->startOfDay();
 
-        return $this->state(fn () => $this->buildAttendanceTimes($workDate));
+        return $this->state(fn () => [
+            'remarks' => null,
+            ...$this->buildAttendanceTimes($workDate),
+        ]);
     }
 
     /**
