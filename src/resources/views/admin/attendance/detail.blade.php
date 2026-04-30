@@ -223,9 +223,10 @@
                 @else
                     <div class="correction-form__input-group">
                         <textarea
+                            data-testid="request-remarks-textarea"
                             name="request_remarks"
                             class="correction-form__textarea"
-                        >{{ old('request_remarks') }}</textarea>
+                        >{{ old('request_remarks', $attendance->remarks ?? '') }}</textarea>
                         @error('request_remarks')
                             <p class="correction-form__error-message">{{ $message }}</p>
                         @enderror

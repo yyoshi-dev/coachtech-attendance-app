@@ -37,6 +37,7 @@ class AttendanceCorrectionTest extends TestCase
         Carbon $workDate,
         ?Carbon $clockIn = null,
         ?Carbon $clockOut = null,
+        ?string $remarks = null,
         ?Carbon $breakStart = null,
         ?Carbon $breakEnd = null,
     ): Attendance
@@ -47,6 +48,7 @@ class AttendanceCorrectionTest extends TestCase
             ->create([
                 'clock_in' => $clockIn ?? $workDate->copy()->setTime(9, 00, 00),
                 'clock_out' => $clockOut ?? $workDate->copy()->setTime(18, 00, 00),
+                'remarks' => $remarks,
             ]);
 
         AttendanceBreak::factory()
@@ -489,6 +491,7 @@ class AttendanceCorrectionTest extends TestCase
             'id' => $attendance->id,
             'clock_in' => $correction->requested_clock_in->format('Y-m-d H:i:s'),
             'clock_out' => $correction->requested_clock_out->format('Y-m-d H:i:s'),
+            'remarks' => $correction->request_remarks,
         ]);
 
         // 休憩データが更新された事の確認
