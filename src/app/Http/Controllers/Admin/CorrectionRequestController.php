@@ -51,6 +51,7 @@ class CorrectionRequestController extends Controller
             $correction->attendance->update([
                 'clock_in' => $correction->requested_clock_in,
                 'clock_out' => $correction->requested_clock_out,
+                'remarks' => $correction->request_remarks,
             ]);
 
             // 休憩レコードの更新

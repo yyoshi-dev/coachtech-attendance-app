@@ -103,6 +103,7 @@ class AttendanceController extends Controller
             $attendance->update([
                 'clock_in' => "$date {$request->requested_clock_in}",
                 'clock_out' => "$date {$request->requested_clock_out}",
+                'remarks' => $request->request_remarks,
             ]);
 
             // 休憩修正レコードの作成と休憩テーブルの更新
