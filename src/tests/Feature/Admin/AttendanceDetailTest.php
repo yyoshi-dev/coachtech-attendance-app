@@ -37,6 +37,7 @@ class AttendanceDetailTest extends TestCase
         Carbon $workDate,
         ?Carbon $clockIn = null,
         ?Carbon $clockOut = null,
+        ?string $remarks = null,
     ): Attendance
     {
         return Attendance::factory()
@@ -45,6 +46,7 @@ class AttendanceDetailTest extends TestCase
             ->create([
                 'clock_in' => $clockIn ?? $workDate->copy()->setTime(9, 00, 00),
                 'clock_out' => $clockOut ?? $workDate->copy()->setTime(18, 00, 00),
+                'remarks' => $remarks,
             ]);
     }
 
@@ -61,8 +63,9 @@ class AttendanceDetailTest extends TestCase
 
         // 勤怠を作成
         $attendance = $this->createAttendance(
-            $this->user,
-            $this->workDate,
+            user: $this->user,
+            workDate: $this->workDate,
+            remarks: 'TEST',
         );
 
         // 休憩を作成
@@ -132,6 +135,12 @@ class AttendanceDetailTest extends TestCase
                 $break->break_end->format('H:i'),
             ], false);
         }
+
+        // 備考の確認
+        $response->assertSeeInOrder([
+            'data-testid="request-remarks-textarea"',
+            $attendance->remarks,
+        ], false);
     }
 
     /**
@@ -435,6 +444,7 @@ class AttendanceDetailTest extends TestCase
             'clock_out' => Carbon::parse(
                 "$date {$correctionData['requested_clock_out']}"
             )->toDateTimeString(),
+            'remarks' => $correctionData['request_remarks'],
         ]);
 
         // 休憩が更新された事を確認
@@ -530,7 +540,10 @@ class AttendanceDetailTest extends TestCase
     public function test_admin_cannot_update_when_request_is_pending(): void
     {
         // 勤怠を作成
-        $attendance = $this->createAttendance($this->user, $this->workDate);
+        $attendance = $this->createAttendance(
+            $this->user,
+            $this->workDate,
+        );
 
         // 修正データを作成
         $correction = AttendanceCorrectionRequest::factory()
@@ -560,6 +573,7 @@ class AttendanceDetailTest extends TestCase
             'id' => $attendance->id,
             'clock_in' => $attendance->clock_in->format('Y-m-d H:i:s'),
             'clock_out' => $attendance->clock_out->format('Y-m-d H:i:s'),
+            'remarks' => null,
         ]);
 
         // 修正データが追加作成されていない事を確認

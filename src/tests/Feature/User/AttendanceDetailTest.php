@@ -176,4 +176,29 @@ class AttendanceDetailTest extends TestCase
             ], false);
         }
     }
+
+    /**
+     * 項目: 勤怠詳細情報取得機能 (一般ユーザー)
+     * 内容: (オプション) 勤怠詳細画面の「備考」が対象勤怠の備考と一致している
+     */
+    public function test_displayed_remarks_matches_attendance_record(): void
+    {
+        // 勤怠を作成
+        $attendance = Attendance::factory()
+            ->for($this->user)
+            ->forWorkDate($this->workDate)
+            ->create(['remarks' => 'TEST']);
+
+        // ログインして勤怠詳細ページを開く
+        $response = $this->actingAs($this->user)
+            ->get(route('attendance.detail', ['id' => $attendance->id]));
+
+        $response->assertOk();
+
+        // 備考が勤怠の備考になっている事を確認
+        $response->assertSeeInOrder([
+            'data-testid="request-remarks-textarea"',
+            $attendance->remarks,
+        ], false);
+    }
 }
